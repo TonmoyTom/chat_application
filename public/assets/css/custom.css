@@ -1,0 +1,13 @@
+.custom-display-none {
+    display: none !important;
+}
+.custom-display-block {
+    display: block !important;
+}
+.custom-display-inline-block {
+    display: inline-block !important;
+}
+.errorClass{
+    color: red;
+    font-size: 12px;
+}
