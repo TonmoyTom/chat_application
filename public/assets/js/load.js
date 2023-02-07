@@ -5,6 +5,7 @@ $(document).ready(function () {
     emoji();
 });
 
+
 function emoji() {
     $('#emoji').emojioneArea({
         emojiPlaceholder: ":smile_cat:",

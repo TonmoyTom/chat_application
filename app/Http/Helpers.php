@@ -14,8 +14,5 @@ function uploadFile($file, $folder = '/'): ?string
 }
 function setImage($url = null, $type = null, $default_image = true): string
 {
-    if ($type == 'user') {
-        return ($url != null) ? asset('storage/' . $url) : ($default_image ? asset('default/default_user.png') : '');
-    }
     return ($url != null) ? asset('storage/' . $url) : ($default_image ? asset('default/default_image.png') : '');
 }

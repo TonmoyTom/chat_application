@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\ChatRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -139,5 +141,35 @@ class ProfileController extends Controller
         return  true;
     }
 
+
+    public function userList( Request $request){
+        $admin = User::first()->toArray();
+        $auth =  \auth()->user()->toArray();
+        $chatRequest = auth()->user()->chatRequest->pluck('owner_id')->toArray();
+
+        $mergeId = array_merge(array($admin['id']) ,  array($auth['id']) , $chatRequest);
+        $myContactId = array_unique($mergeId);
+        $users = User::whereNotIn('id' , $myContactId)->get();
+        return \view('ajax.modal.user-list', compact('users'));
+    }
+    public function addFriend( Request $request){
+        $data = $request->all();
+        ChatRequest::create([
+            'from_id'    =>\auth()->id(),
+            'owner_id'   => $data['ownerId'],
+            'owner_type' => User::class,
+            'status' => 1,
+        ]);
+        return response()->json([
+            'message' => true
+        ], 202);
+    }
+
+    public function myContact( Request $request){
+
+        $chatRequestId = auth()->user()->chatRequest->pluck('owner_id')->toArray();
+        $users = User::whereIn('id' , $chatRequestId)->get();
+        return \view('ajax.modal.my-contact', compact('users'));
+    }
 
 }

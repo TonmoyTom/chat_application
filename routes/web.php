@@ -19,7 +19,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $users = \App\Models\User::all()->except(auth()->id());
+    return view('dashboard' , compact('users'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -35,6 +36,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/photo-see', [ProfileController::class, 'photoSee'])->name('setting');
     Route::post('/seen-show-hide', [ProfileController::class, 'showHide'])->name('show.hide');
     Route::post('/subscribed', [ProfileController::class, 'isSubscribed'])->name('subscribed');
+    Route::post('/user-list', [ProfileController::class, 'userList'])->name('user.list');
+    Route::post('/add-riend', [ProfileController::class, 'addFriend'])->name('add.friend');
+    Route::post('/my-contact', [ProfileController::class, 'myContact'])->name('my.contact');
+
 });
 
 require __DIR__.'/auth.php';
