@@ -10,8 +10,8 @@ class Conversation extends Model
 {
     use HasFactory;
 
-    const LIMIT = 5000;
-    const PATH = 'conversation';
+//    const LIMIT = 5000;
+//    const PATH = 'conversation';
     const MEDIA_IMAGE = 1;
     const MEDIA_PDF = 2;
     const MEDIA_DOC = 3;
@@ -22,41 +22,14 @@ class Conversation extends Model
     const MEDIA_XLS = 8;
     const MESSAGE_TYPE_BADGES = 9;
 
-    public $fillable = [
-        'from_id',
-        'to_id',
-        'message',
-        'message_type',
-        'status',
-        'file_name',
-        'to_type',
-        'reply_to',
-        'url_details',
-    ];
+    protected $guarded = ['id'];
 
-    /**
-     * The attributes that should be casted to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'from_id'      => 'integer',
-        'reply_to'     => 'integer',
-        'to_id'        => 'string',
-        'message'      => 'string',
-        'message_type' => 'integer',
-        'file_name'    => 'string',
-        'to_type'      => 'string',
-        'url_details'  => 'json',
-        'status'       => 'integer',
-    ];
 
-    public static $rules = [
-        'to_id'   => 'required|string',
-        'message' => 'required|string',
-    ];
 
-    protected $appends = ['time_from_now_in_min', 'is_group'];
+
+
+
+//    protected $appends = ['time_from_now_in_min', 'is_group'];
 
     public function getTimeFromNowInMinAttribute()
     {

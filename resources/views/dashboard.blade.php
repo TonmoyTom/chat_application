@@ -56,3 +56,9 @@
         <!-- end  layout wrapper -->
     </div>
 @endsection
+@push('script')
+    <script>
+        activeUser('{{ @$firstUser->id }}' , '{{ auth()->id() }}')
+    </script>
+@endpush
+

@@ -146,6 +146,87 @@ function changePassword() {
     });
 }
 
+function activeUser(id , authId){
+    $.ajax({
+        method: 'post',
+        url: '/message-user-find',
+        data: {
+            id: id,
+            authId: authId,
+            '_token': csrf
+        },
+        dataType: "html",
+        success: function (response) {
+            $(`.activeUser`).removeClass('activeUser');
+            $(`#newFriend${id}`).addClass('activeUser');
+            $('#messageList').html(response)
+        }, error: function (xhr) {
+        }
+    });
+}
+
+function messageSubmit(id , authId){
+    let message = $('.message').val();
+    console.log(message);
+    if(message.length === 0){
+        $('#messageError').html('Please Must Be Data Set');
+    }else{
+        $.ajax({
+            method: 'post',
+            url: '/message-user-send',
+            data: {
+                id: id,
+                authId: authId,
+                message: message,
+                '_token': csrf
+            },
+            success: function (response) {
+                let right = `<li class="right"  >
+                    <div class="conversation-list">
+                        <div class="chat-avatar">
+                            <img src="${response.own_user_image}" alt="">
+                        </div>
+                        <div class="user-chat-content">
+                            <div class="ctext-wrap">
+                                <div class="ctext-wrap-content">
+                                    <p class="mb-0">
+                                       ${response.chat.message}
+                                    </p>
+                                    <p class="chat-time mb-0"><i class="ri-time-line align-middle"></i> <span
+                                            class="align-middle">${response.chat.created_at}</span></p>
+                                </div>
+                                <div class="dropdown align-self-start">
+                                    <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                       aria-haspopup="true" aria-expanded="false">
+                                        <i class="ri-more-2-fill"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="#">Copy <i
+                                                class="ri-file-copy-line float-end text-muted"></i></a>
+                                        <a class="dropdown-item" href="#">Save <i
+                                                class="ri-save-line float-end text-muted"></i></a>
+                                        <a class="dropdown-item" href="#">Forward <i
+                                                class="ri-chat-forward-line float-end text-muted"></i></a>
+                                        <a class="dropdown-item" href="#">Delete <i
+                                                class="ri-delete-bin-line float-end text-muted"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="conversation-name">${response.own_user.name}</div>
+                        </div>
+                    </div>
+                </li>`
+                $('.message').val('');
+                $('.emojionearea-editor').html('');
+                $('#senderAppend').append(right)
+            }, error: function (xhr) {
+            }
+        });
+    }
+
+}
+
 function editImage(){
     $('#editProfile').modal("show");
 }

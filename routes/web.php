@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Conversation;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,8 +21,16 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    $users = \App\Models\User::all()->except(auth()->id());
-    return view('dashboard' , compact('users'));
+    $chatRequestFrom = Conversation::with('sender' , 'receiver')
+        ->where('from_id' , auth()->id())
+        ->pluck('to_id')->toArray();
+        $chatRequestOwner = Conversation::with('sender' , 'receiver')
+            ->where('to_id' , auth()->id())
+            ->pluck('from_id')->toArray();
+    $chatRequestId = array_unique(array_merge($chatRequestFrom, $chatRequestOwner));
+    $users = User::whereIn('id' , $chatRequestId)->orderBy('id' , 'desc')->get();
+    $firstUser = User::whereIn('id' , $chatRequestId)->orderBy('id' , 'desc')->first();
+    return view('dashboard' , compact('users' , 'firstUser'));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -37,8 +47,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/seen-show-hide', [ProfileController::class, 'showHide'])->name('show.hide');
     Route::post('/subscribed', [ProfileController::class, 'isSubscribed'])->name('subscribed');
     Route::post('/user-list', [ProfileController::class, 'userList'])->name('user.list');
-    Route::post('/add-riend', [ProfileController::class, 'addFriend'])->name('add.friend');
+    Route::post('/add-friend', [ProfileController::class, 'addFriend'])->name('add.friend');
     Route::post('/my-contact', [ProfileController::class, 'myContact'])->name('my.contact');
+    Route::post('/message-user-find', [ProfileController::class, 'messageUserFriend'])->name('message.user.find');
+    Route::post('/message-user-send', [ProfileController::class, 'messageUserSend'])->name('message.user.send');
 
 });
 
