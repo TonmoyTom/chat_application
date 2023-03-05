@@ -21,9 +21,9 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    $chatRequestFrom = Conversation::with('sender' , 'receiver')
-        ->where('from_id' , auth()->id())
-        ->pluck('to_id')->toArray();
+     $chatRequestFrom = Conversation::with('sender' , 'receiver')
+         ->where('from_id' , auth()->id())
+         ->pluck('to_id')->toArray();
         $chatRequestOwner = Conversation::with('sender' , 'receiver')
             ->where('to_id' , auth()->id())
             ->pluck('from_id')->toArray();

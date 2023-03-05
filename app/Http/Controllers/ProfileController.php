@@ -143,13 +143,10 @@ class ProfileController extends Controller
     }
 
     public function userList( Request $request){
-        $admin = User::first()->toArray();
-        $auth =  \auth()->user()->toArray();
-        $chatRequest = auth()->user()->chatRequest->pluck('owner_id')->toArray();
-
-        $mergeId = array_merge(array($admin['id']) ,  array($auth['id']) , $chatRequest);
-        $myContactId = array_unique($mergeId);
-        $users = User::whereNotIn('id' , $myContactId)->get();
+        $chatRequestFrom = \App\Models\ChatRequest::where('from_id' , auth()->id())->pluck('owner_id')->toArray();
+        $chatRequestOwner = \App\Models\ChatRequest::where('owner_id' , auth()->id())->pluck('from_id')->toArray();
+        $chatRequestId = array_unique(array_merge($chatRequestFrom, $chatRequestOwner));
+        $users = User::whereNotIn('id' , $chatRequestId)->orderBy('id' , 'desc')->get();
         return \view('ajax.modal.user-list', compact('users'));
     }
     public function addFriend( Request $request){
@@ -170,8 +167,10 @@ class ProfileController extends Controller
 
     public function myContact( Request $request){
 
-        $chatRequestId = auth()->user()->chatRequest->pluck('owner_id')->toArray();
-        $users = User::whereIn('id' , $chatRequestId)->get();
+        $chatRequestFrom = \App\Models\ChatRequest::where('from_id' , auth()->id())->pluck('owner_id')->toArray();
+        $chatRequestOwner = \App\Models\ChatRequest::where('owner_id' , auth()->id())->pluck('from_id')->toArray();
+        $chatRequestId = array_unique(array_merge($chatRequestFrom, $chatRequestOwner));
+        $users = User::whereIn('id' , $chatRequestId)->orderBy('id' , 'desc')->get();
         return \view('ajax.modal.my-contact', compact('users'));
     }
 
