@@ -7,11 +7,11 @@
                             class="ri-arrow-left-s-line"></i></a>
                 </div>
                 <div class="me-3 ms-0">
-                    <img src="{{ setImage($user->photo_url) }}" class="rounded-circle avatar-xs" alt="">
+                    <img src="{{ setImage(@$user->photo_url) }}" class="rounded-circle avatar-xs" alt="">
                 </div>
                 <div class="flex-grow-1 overflow-hidden">
                     <h5 class="font-size-16 mb-0 text-truncate"><a href="#"
-                                                                   class="text-reset user-profile-show">{{ $user->name }}</a>
+                                                                   class="text-reset user-profile-show">{{ @$user->name }}</a>
                         <i class="ri-record-circle-fill font-size-10 text-success d-inline-block ms-1"></i></h5>
                 </div>
             </div>
@@ -71,7 +71,7 @@
 
         @foreach($messages as $message)
             @if($message->to_id != $id)
-                    {{--        Reciver        --}}
+                {{--        Reciver        --}}
                 <li>
                     <div class="conversation-list">
                         <div class="chat-avatar">
@@ -112,7 +112,7 @@
                 </li>
             @else
                 {{--        Sender        --}}
-                <li class="right" >
+                <li class="right">
                     <div class="conversation-list">
                         <div class="chat-avatar">
                             <img src="{{ setImage(auth()->user()->photo_url) }}" alt="">
@@ -125,7 +125,8 @@
                                         {{ $message->message }}
                                     </p>
                                     <p class="chat-time mb-0"><i class="ri-time-line align-middle"></i> <span
-                                            class="align-middle">{{ \Carbon\Carbon::parse($message->created_at)->format('g:i A') }}</span></p>
+                                            class="align-middle">{{ \Carbon\Carbon::parse($message->created_at)->format('g:i A') }}</span>
+                                    </p>
                                 </div>
                                 <div class="dropdown align-self-start">
                                     <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -171,9 +172,9 @@
                         </button>
                     </li>
                     <li class="list-inline-item">
-                        <button type="button"
+                        <button type="button" id="messageSubmit" data-id="{{ $user->id }}"
                                 class="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light"
-                                onclick="messageSubmit('{{ $user->id }}', '{{ auth()->id() }}')">
+                               >
                             <i class="ri-send-plane-2-fill"></i>
                         </button>
 
@@ -185,9 +186,13 @@
 </div>
 
 <script>
+
+
     $('#emoji1').emojioneArea({
         emojiPlaceholder: ":smile_cat:",
         search: false,
         inline: true
     });
+
+
 </script>

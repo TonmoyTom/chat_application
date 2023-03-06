@@ -336,42 +336,47 @@
             console.log("block")
         }
 
-        function addFriend(id, ownerId){
-            $.ajax({
-                url: "{{route('add.friend')}}",
-                data: {
-                    "_token": "{{ csrf_token() }}",
-                    id: id,
-                    ownerId: ownerId,
-                },
-                type: "POST",
-                dataType: "json",
-                success: function (response) {
-                    console.log(response.user);
-                    if(response.message == true){
-                        let newFriend =
-                            `<li id="newFriend${response.user.id}">
-                                <a href="#">
-                                    <div class="d-flex">
-                                        <div class="chat-user-img online align-self-center me-3 ms-0">
-                                            <img src="${response.image}" class="rounded-circle avatar-xs" alt="">
-                                            <span class="user-status"></span>
-                                        </div>
+        {{--$(document).ready(function() {--}}
+        {{--    $('#addFriend').click(function (){--}}
+        {{--        console.log($(this).data());--}}
+        {{--    })--}}
+        {{--    function addFriend(id, ownerId) {--}}
+        {{--        $.ajax({--}}
+        {{--            url: "{{route('add.friend')}}",--}}
+        {{--            data: {--}}
+        {{--                "_token": "{{ csrf_token() }}",--}}
+        {{--                id: id,--}}
+        {{--                ownerId: ownerId,--}}
+        {{--            },--}}
+        {{--            type: "POST",--}}
+        {{--            dataType: "json",--}}
+        {{--            success: function (response) {--}}
+        {{--                console.log(response.user);--}}
+        {{--                if (response.message == true) {--}}
+        {{--                    let newFriend =--}}
+        {{--                        `<li id="newFriend${response.user.id}">--}}
+        {{--                        <a href="#">--}}
+        {{--                            <div class="d-flex">--}}
+        {{--                                <div class="chat-user-img online align-self-center me-3 ms-0">--}}
+        {{--                                    <img src="${response.image}" class="rounded-circle avatar-xs" alt="">--}}
+        {{--                                    <span class="user-status"></span>--}}
+        {{--                                </div>--}}
 
-                                        <div class="flex-grow-1 overflow-hidden">
-                                            <h5 class="text-truncate font-size-15 mb-1">${response.user.name}</h5>
-                                            <p class="chat-user-message text-truncate mb-0">Hey! there I'm available</p>
-                                        </div>
-                                        <div class="font-size-11">05 min</div>
-                                    </div>
-                                </a>
-                            </li>`;
-                        $(`#friend${ownerId}`).remove();
-                        $(`#newfriendList`).prepend(newFriend);
-                        $('#addNewChat').modal('hide');
-                    }
-                }
-            });
-        }
+        {{--                                <div class="flex-grow-1 overflow-hidden">--}}
+        {{--                                    <h5 class="text-truncate font-size-15 mb-1">${response.user.name}</h5>--}}
+        {{--                                    <p class="chat-user-message text-truncate mb-0">Hey! there I'm available</p>--}}
+        {{--                                </div>--}}
+        {{--                                <div class="font-size-11">05 min</div>--}}
+        {{--                            </div>--}}
+        {{--                        </a>--}}
+        {{--                    </li>`;--}}
+        {{--                    $(`#friend${ownerId}`).remove();--}}
+        {{--                    $(`#newfriendList`).prepend(newFriend);--}}
+        {{--                    $('#addNewChat').modal('hide');--}}
+        {{--                }--}}
+        {{--            }--}}
+        {{--        });--}}
+        {{--    }--}}
+        {{--});--}}
     </script>
 @endpush

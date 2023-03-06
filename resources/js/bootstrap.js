@@ -35,3 +35,8 @@ window.Echo =new Echo({
     disableStats:true,
     cluster: 'eu',
 });
+
+// window.Echo.join(`private`)
+//     .listen('MessageSend', (e) => {
+//         console.log(    e);
+//     });

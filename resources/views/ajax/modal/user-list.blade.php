@@ -12,7 +12,7 @@
                         <p class="chat-user-message text-truncate mb-0">
                             <i class="ri-image-fill align-middle me-1 ms-0"></i> {{ $user->email }}</p>
                     </div>
-                    <button type="button"  class="btn btn-primary"  onclick="addFriend('{{ auth()->id() }}' , '{{ $user->id }}')">Chat</button>
+                    <button type="button"  class="btn btn-primary addFriend" data-id="{{ $user->id }}">Chat</button>
                 </div>
             </a>
         </li>
@@ -20,3 +20,5 @@
         <li>No User Found</li>
     @endforelse
 </ul>
+
+

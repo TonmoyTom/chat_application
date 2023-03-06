@@ -146,7 +146,7 @@
 <script src="{{ asset('assets/js/pages/index.init.js') }}"></script>
 
 <script src="{{ asset('assets/js/app.js') }}"></script>
-<script src="{{ asset('assets/js/load.js') }}" type="text/javascript"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js"
 ></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"
@@ -155,6 +155,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <script type="text/javascript" src="{{asset('assets/libs/imageUploader/image-uploader.min.js')}} "></script>
 @vite(['resources/js/app.js'])
+<script src="{{ asset('assets/js/load.js') }}" ></script>
 @stack('script')
 
 <script>
@@ -171,14 +172,13 @@
     }
 
 
-    $(document).ready(function () {
-        console.log(window.Echo);
-    });
+
 
     // window.addEventListener('DOMContentLoaded',function() {
     //
     // })
 </script>
+
 </body>
 
 <!-- Mirrored from themesbrand.com/chatvia/layouts/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Sun, 22 Jan 2023 18:14:20 GMT -->

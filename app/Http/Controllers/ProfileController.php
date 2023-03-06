@@ -147,12 +147,14 @@ class ProfileController extends Controller
         $chatRequestOwner = \App\Models\ChatRequest::where('owner_id' , auth()->id())->pluck('from_id')->toArray();
         $chatRequestId = array_unique(array_merge($chatRequestFrom, $chatRequestOwner));
         $users = User::whereNotIn('id' , $chatRequestId)->orderBy('id' , 'desc')->get();
+
         return \view('ajax.modal.user-list', compact('users'));
     }
     public function addFriend( Request $request){
         $data = $request->all();
+
         ChatRequest::create([
-            'from_id'    =>\auth()->id(),
+            'from_id'    => \auth()->id(),
             'owner_id'   => $data['ownerId'],
             'owner_type' => User::class,
             'status' => 1,
@@ -162,6 +164,8 @@ class ProfileController extends Controller
             'message' => true,
             'user' => $user,
             'image' => setImage($user['photo_url']) ,
+            'last_message' => lastMessage($user['id']) ,
+            'last_date_message' => lastMessageDate($user['id']) ,
         ], 202);
     }
 
@@ -170,11 +174,13 @@ class ProfileController extends Controller
         $chatRequestFrom = \App\Models\ChatRequest::where('from_id' , auth()->id())->pluck('owner_id')->toArray();
         $chatRequestOwner = \App\Models\ChatRequest::where('owner_id' , auth()->id())->pluck('from_id')->toArray();
         $chatRequestId = array_unique(array_merge($chatRequestFrom, $chatRequestOwner));
-        $users = User::whereIn('id' , $chatRequestId)->orderBy('id' , 'desc')->get();
+        $users = User::where('id' , '!=' , \auth()->id())->whereIn('id' , $chatRequestId)->orderBy('id' , 'desc')->get();
+
         return \view('ajax.modal.my-contact', compact('users'));
     }
 
     public function messageUserFriend( Request $request){
+
         $user = User::find($request->id);
         $id = $request->id;
         $messages =  Conversation::with('sender', 'receiver')->where(function($q) use ($id) {
@@ -201,8 +207,19 @@ class ProfileController extends Controller
             'url_details' => json_encode($input),
         ]);
 
-        $message = Conversation::with('sender' , 'receiver')->find($conversation->id);
 
+        $message = Conversation::with('sender' , 'receiver')->find($conversation->id);
+        $data = [
+            'to_id' => $message->to_id,
+            'message' => true,
+            'chat' => $message,
+            'date' => messageDate($message->created_at),
+            'sender_image' => setImage($message->sender->photo_url),
+            'receiver_image' => setImage($message->receiver->photo_url),
+            'own_user' => $message->sender,
+            'own_user_re' => $message->receiver,
+        ];
+        broadcast(new \App\Events\MessageSend($data));
         return response()->json([
             'message' => true,
             'chat' => $message,
@@ -210,6 +227,7 @@ class ProfileController extends Controller
             'receiver_image' => setImage($message->receiver->photo_url),
             'own_user' => \auth()->user(),
             'own_user_image' => setImage(\auth()->user()->photo_url),
+            'date' => messageDate($message->created_at),
         ], 202);
 
     }

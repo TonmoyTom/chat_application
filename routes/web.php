@@ -3,8 +3,10 @@
 use App\Http\Controllers\ProfileController;
 use App\Models\Conversation;
 use App\Models\User;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,16 +23,38 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-     $chatRequestFrom = Conversation::with('sender' , 'receiver')
-         ->where('from_id' , auth()->id())
-         ->pluck('to_id')->toArray();
-        $chatRequestOwner = Conversation::with('sender' , 'receiver')
-            ->where('to_id' , auth()->id())
-            ->pluck('from_id')->toArray();
-    $chatRequestId = array_unique(array_merge($chatRequestFrom, $chatRequestOwner));
-    $users = User::whereIn('id' , $chatRequestId)->orderBy('id' , 'desc')->get();
-    $firstUser = User::whereIn('id' , $chatRequestId)->orderBy('id' , 'desc')->first();
-    return view('dashboard' , compact('users' , 'firstUser'));
+//            $data = User::first();
+//        event(new  \App\Events\Demo($data));
+    DB::statement("SET SESSION sql_mode=''");
+   $messages  = \App\Models\Conversation::where(function ($q){
+        $q->where('from_id',  auth()->id());
+        $q->orWhere('to_id',  auth()->id());
+    })->groupBy('from_id' , 'to_id')
+       ->select('to_id' , 'from_id' , 'message', 'reply_to')
+       ->orderBy('id', 'desc')
+       ->get();
+
+    $usedUserIds = [];
+    foreach ($messages as $message) {
+        $userId = $message->from_id == auth()->id() ? $message->to_id : $message->from_id;
+        if (!in_array($userId, $usedUserIds)) {
+            $recentUsersWithMessage[] = [
+                'user_id' => $userId,
+                'to_id' =>  $message->to_id,
+                'message' => $message->message,
+                'created_at' => $message->created_at,
+                'reply_to' => $message->reply_to,
+            ];
+            $usedUserIds[] = $userId;
+        }
+    }
+
+    foreach ($recentUsersWithMessage as $key => $userMessage) {
+        $recentUsersWithMessage[$key]['name'] = User::where('id', $userMessage['user_id'])->value('name') ?? '';
+        $recentUsersWithMessage[$key]['photo_url'] = User::where('id', $userMessage['user_id'])->value('photo_url') ?? '';
+    }
+
+    return view('dashboard' , compact('recentUsersWithMessage' ));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

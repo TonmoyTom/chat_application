@@ -1,11 +1,14 @@
 @extends('layouts.app')
 @section('content')
     <div class="layout-wrapper d-lg-flex">
+
+        <input id="new_user_id" type="hidden" value="{{@$recentUsersWithMessage[0]['user_id'] }}">
+        <input id="user_id" type="hidden" value="{{ auth()->id() }}">
         <!-- Start left sidebar-menu -->
         <div class="side-menu flex-lg-column me-lg-1 ms-lg-0">
             <!-- Start side-menu nav -->
-            @include('layouts.navigation')
-            <!-- end side-menu nav -->
+        @include('layouts.navigation')
+        <!-- end side-menu nav -->
             <!-- Side menu user -->
         </div>
         <!-- end left sidebar-menu -->
@@ -14,20 +17,20 @@
         <div class="chat-leftsidebar me-lg-1 ms-lg-0" id="profileLoad">
             <div class="tab-content">
                 <!-- Start Profile tab-pane -->
-                @include('layouts.profile')
-                <!-- End Profile tab-pane -->
+            @include('layouts.profile')
+            <!-- End Profile tab-pane -->
                 <!-- Start chats tab-pane -->
-                @include('layouts.chat')
-                <!-- End chats tab-pane -->
+            @include('layouts.chat')
+            <!-- End chats tab-pane -->
                 <!-- Start groups tab-pane -->
-               @include('layouts.group')
-                <!-- End groups tab-pane -->
+            @include('layouts.group')
+            <!-- End groups tab-pane -->
                 <!-- Start contacts tab-pane -->
-                @include('layouts.contact')
-                <!-- End contacts tab-pane -->
+            @include('layouts.contact')
+            <!-- End contacts tab-pane -->
                 <!-- Start settings tab-pane -->
-                 @include('layouts.setting')
-                <!-- End settings tab-pane -->
+            @include('layouts.setting')
+            <!-- End settings tab-pane -->
             </div>
             <!-- end tab content -->
         </div>
@@ -39,12 +42,12 @@
             <div class="d-lg-flex">
                 <!-- start chat conversation section -->
                 <div class="w-100 overflow-hidden position-relative">
-                    @include('layouts.user-bar')
-                    <!-- end chat user head -->
+                @include('layouts.user-bar')
+                <!-- end chat user head -->
 
                     <!-- start chat conversation -->
-                    @include('layouts.chat-list')
-                    <!-- end chat input section -->
+                @include('layouts.chat-list')
+                <!-- end chat input section -->
                 </div>
 
                 <!-- end chat conversation section -->
@@ -56,9 +59,17 @@
         <!-- end  layout wrapper -->
     </div>
 @endsection
+
 @push('script')
     <script>
-        activeUser('{{ @$firstUser->id }}' , '{{ auth()->id() }}')
+        // $(document).ready(function () {
+
+        // window.Echo.join(`private`)
+        //     .listen('MessageSend', (e) => {
+        //         console.log(    e);
+        //     });
+        // });
     </script>
 @endpush
+
 

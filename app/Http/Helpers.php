@@ -18,11 +18,33 @@ function setImage($url = null, $type = null, $default_image = true): string
 }
 
 
-function lastMessage($id){
- $message  = \App\Models\Conversation::where('to_id', $id)->orWhere('from_id', $id)->latest()->first();
- if($message != null ) {
-     return $message->message;
- }else{
-     return '';
- }
+function lastMessage($id)
+{
+    $message = \App\Models\Conversation::where('to_id', $id)->orWhere('from_id', $id)->latest()->first();
+    if ($message != null) {
+        return $message;
+    } else {
+        return '';
+    }
+}
+function lastMessageDate($id){
+    $message  = \App\Models\Conversation::where('to_id', $id)->orWhere('from_id', $id)->latest()->first();
+    if($message != null){
+        $totalDuration = \Carbon\Carbon::now()->diffInSeconds($message->created_at);
+        $second = \Carbon\CarbonInterval::seconds($totalDuration)->cascade()->forHumans();
+        return $second;
+    }else {
+        return '';
+    }
+
+}
+function messageDate($value){
+    if($value != null){
+        $totalDuration = \Carbon\Carbon::now()->diffInSeconds($value);
+        $second = \Carbon\CarbonInterval::seconds($totalDuration)->cascade()->forHumans();
+        return $second;
+    }else {
+        return '';
+    }
+
 }
