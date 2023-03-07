@@ -29,8 +29,17 @@ function lastMessage($id)
         $q->where('to_id', auth()->id());
         $q->where('from_id', $id);
     })->latest()->first();
+
+
     if ($message != null) {
-        return $message;
+        $totalDuration = \Carbon\Carbon::now()->diffInSeconds($message->created_at);
+        $second = \Carbon\CarbonInterval::seconds($totalDuration)->cascade()->forHumans();
+        $data = [
+            'message' => $message->message,
+            'date' => $second,
+            'message_type' => $message->message_type,
+        ];
+        return $data;
     } else {
         return '';
     }
@@ -40,8 +49,7 @@ function lastMessageDate($id)
 {
     $message = \App\Models\Conversation::where('to_id', $id)->orWhere('from_id', $id)->latest()->first();
     if ($message != null) {
-        $totalDuration = \Carbon\Carbon::now()->diffInSeconds($message->created_at);
-        $second = \Carbon\CarbonInterval::seconds($totalDuration)->cascade()->forHumans();
+
         return $second;
     } else {
         return '';
