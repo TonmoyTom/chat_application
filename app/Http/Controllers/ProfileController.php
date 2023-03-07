@@ -194,9 +194,8 @@ class ProfileController extends Controller
     }
 
     public function messageUserSend( Request $request){
-
         $input = [
-            'title'       => $request->message,
+            'title' => $request->message,
         ];
         $conversation =  Conversation::create([
             'from_id' => $request->authId,
@@ -230,6 +229,46 @@ class ProfileController extends Controller
             'date' => messageDate($message->created_at),
         ], 202);
 
+    }
+
+    public function fileUpload(Request $request){
+
+        $input = [
+            'title' => "file_upload",
+        ];
+        $conversation =  Conversation::create([
+            'from_id' => $request->auth_id,
+            'to_id' => $request->user_id,
+            'message' => "file_upload",
+            'message_type' => 1,
+            'status' => 1,
+            'url_details' => json_encode($input),
+            'file_name' => uploadFile($request->fromFile , 'chat')
+        ]);
+        $message = Conversation::with('sender' , 'receiver')->find($conversation->id);
+        $data = [
+            'to_id' => $message->to_id,
+            'message' => true,
+            'chat' => $message,
+            'image_message' => setImage($message->file_name),
+            'image_type' => setImage($message->message_type),
+            'date' => messageDate($message->created_at),
+            'sender_image' => setImage($message->sender->photo_url),
+            'receiver_image' => setImage($message->receiver->photo_url),
+            'own_user' => $message->sender,
+            'own_user_re' => $message->receiver,
+        ];
+        broadcast(new \App\Events\MessageSend($data));
+        return response()->json([
+            'message' => true,
+            'chat' => $message,
+            'image_message' => setImage($message->file_name),
+            'sender_image' => setImage($message->sender->photo_url),
+            'receiver_image' => setImage($message->receiver->photo_url),
+            'own_user' => \auth()->user(),
+            'own_user_image' => setImage(\auth()->user()->photo_url),
+            'date' => messageDate($message->created_at),
+        ], 202);
     }
 
 }

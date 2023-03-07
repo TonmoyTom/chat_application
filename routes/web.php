@@ -24,7 +24,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
 //            $data = User::first();
-//        event(new  \App\Events\Demo($data));
+        event(new  \App\Events\Demo(auth()->user()));
     DB::statement("SET SESSION sql_mode=''");
    $messages  = \App\Models\Conversation::where(function ($q){
         $q->where('from_id',  auth()->id());
@@ -48,11 +48,15 @@ Route::get('/dashboard', function () {
             $usedUserIds[] = $userId;
         }
     }
-
-    foreach ($recentUsersWithMessage as $key => $userMessage) {
-        $recentUsersWithMessage[$key]['name'] = User::where('id', $userMessage['user_id'])->value('name') ?? '';
-        $recentUsersWithMessage[$key]['photo_url'] = User::where('id', $userMessage['user_id'])->value('photo_url') ?? '';
+    if($messages->count() > 0){
+        foreach ($recentUsersWithMessage as $key => $userMessage) {
+            $recentUsersWithMessage[$key]['name'] = User::where('id', $userMessage['user_id'])->value('name') ?? '';
+            $recentUsersWithMessage[$key]['photo_url'] = User::where('id', $userMessage['user_id'])->value('photo_url') ?? '';
+        }
+    }else{
+        $recentUsersWithMessage = [];
     }
+
 
     return view('dashboard' , compact('recentUsersWithMessage' ));
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -75,6 +79,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/my-contact', [ProfileController::class, 'myContact'])->name('my.contact');
     Route::post('/message-user-find', [ProfileController::class, 'messageUserFriend'])->name('message.user.find');
     Route::post('/message-user-send', [ProfileController::class, 'messageUserSend'])->name('message.user.send');
+    Route::post('/file-upload', [ProfileController::class, 'fileUpload'])->name('file.upload');
 
 });
 

@@ -4,8 +4,6 @@ var csrf = document.querySelector('meta[name="csrf-token"]').content;
 imgae();
 
 
-
-
 function profile() {
     console.log("helo");
     $.ajax({
@@ -144,11 +142,18 @@ function editImage() {
     $('#editProfile').modal("show");
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
+
+    function scrollBottom() {
+        var ChatDiv = $('.simplebar-content-wrapper');
+        var height = ChatDiv[3].scrollHeight;
+        ChatDiv.scrollTop(height);
+    }
+
     let new_id = document.getElementById('new_user_id').value;
     var new_authId = document.getElementById('user_id').value;
-
-        window.Echo.join(`private.${new_authId}`)
+    var users = [];
+    window.Echo.join(`private.${new_authId}`)
         .listen('MessageSend', (e) => {
             console.log(e);
             let anotherMessage = e.message;
@@ -160,11 +165,32 @@ $(document).ready(function() {
                         <div class="user-chat-content">
                             <div class="ctext-wrap">
                                 <div class="ctext-wrap-content">
-                                    <p class="mb-0">
+                                 ${anotherMessage.chat.message_type == 0 ?
+                `<p class="mb-0">
                                        ${anotherMessage.chat.message}
                                     </p>
                                     <p class="chat-time mb-0"><i class="ri-time-line align-middle"></i> <span
-                                            class="align-middle">${anotherMessage.date}</span></p>
+                                            class="align-middle">${anotherMessage.date}</span></p>`
+                :
+                `<ul class="list-inline message-img  mb-0">
+                                            <li class="list-inline-item message-img-list me-2 ms-0">
+                                                <div>
+                                                    <a class="popup-img d-inline-block m-1" href="${anotherMessage.image_message}"
+                                                     title="Project 1">
+                                                        <img src="${anotherMessage.image_message}" alt="" class="rounded border">
+                                                    </a>
+                                                </div>
+                                                <div class="message-img-link">
+                                                    <ul class="list-inline mb-0">
+                                                        <li class="list-inline-item">
+                                                            <a download="img-1.jpg" href="${anotherMessage.image_message}" class="fw-medium">
+                                                                <i class="ri-download-2-line"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                    </ul>`}
                                 </div>
                                 <div class="dropdown align-self-start">
                                     <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -199,29 +225,57 @@ $(document).ready(function() {
 
                             <div class="flex-grow-1 overflow-hidden">
                                 <h5 class="text-truncate font-size-15 mb-1">${anotherMessage.chat.sender.name}</h5>
-                                <p class="chat-user-message text-truncate mb-0">${anotherMessage.chat.message}</p>
+
+                                <p class="chat-user-message text-truncate mb-0">${anotherMessage.chat.message_type == 0 ? `${anotherMessage.chat.message}` : "File Send"}</p>
                             </div>
                             <div class="font-size-11">${anotherMessage.date}</div>
                         </div>
                     </a>
                 </li>`;
-            $('.message').val('');
-            $('.emojionearea-editor').html('');
-            $('#messageError').html('');
+            $('.message').val();
+            $('.emojionearea-editor').html();
+            $('#messageError').html();
             $('#senderAppend').append(right);
             $(`#newFriend${anotherMessage.chat.sender.id}`).remove();
             $('#newfriendList').prepend(userList);
             $(`.singleActive`).removeClass('singleActive');
             $(`#newFriend${anotherMessage.chat.sender.id}`).addClass('singleActive');
-        });
+            scrollBottom();
 
-    var echo = window.Echo;
-    $(document).delegate(".activeUser", "click", function(event){
-        var id = $(this).data().id ;
-        var ownerId =  new_authId;
+
+        });
+    window.Echo.join(`chat`)
+        .joining((user) => {
+            users.push(user);
+            console.log(users)
+            var onlineUserData = '';
+             onlineUserData += `<div class="owl-stage-outer">
+                    <div class="owl-stage" style="transform: translate3d(0px, 0px, 0px); transition: all 0s ease 0s; width: 87px;display: inline-flex;">`;
+            $.each(users, function (key, onlineUser) {
+                onlineUserData += `<div class="owl-item active activeUser" style="width: 71px; margin-right: 16px;" data-id="${onlineUser.id}" >
+                            <div class="item">
+                                <a href="#" class="user-status-box">
+                                    <div class="avatar-xs mx-auto d-block chat-user-img online">
+                                        <img src="${onlineUser.photo_url}" alt="user-img" class="img-fluid rounded-circle">
+                                        <span class="user-status"></span>
+                                    </div>
+                                    <h5 class="font-size-13 text-truncate mt-3 mb-1">${onlineUser.name}</h5>
+                                </a>
+                            </div></div>`
+            });
+            onlineUserData += `</div></div>`;
+            $('#user-status-carousel').html(onlineUserData);
+        })
+        .listen('Demo', (e) => {
+            console.log(e);
+        });
+    $(document).delegate(".activeUser", "click", function (event) {
+        var id = $(this).data().id;
+        var ownerId = new_authId;
         activeUser(id, ownerId);
     });
     emoji();
+
     function emoji() {
         $('#emoji').emojioneArea({
             emojiPlaceholder: ":smile_cat:",
@@ -229,7 +283,9 @@ $(document).ready(function() {
             inline: true
         });
     }
+
     activeUser(new_id, new_authId);
+
     function activeUser(new_id, new_authId) {
         console.log("ello");
         var echo = window.Echo;
@@ -247,16 +303,17 @@ $(document).ready(function() {
                 $(`.singleActive`).removeClass('singleActive');
                 $(`#newFriend${new_id}`).addClass('singleActive');
                 $('#messageList').html(response)
+                $('#addNewChat').modal('hide');
             }, error: function (xhr) {
             }
         });
     }
-
-    $(document).delegate(".addFriend", "click", function(event){
-        var id =  new_authId;
+    $(document).delegate(".addFriend", "click", function (event) {
+        var id = new_authId;
         var ownerId = $(this).data().id;
         addFriend(id, ownerId);
     });
+
     function addFriend(id, ownerId) {
         $.ajax({
             url: "/add-friend",
@@ -290,18 +347,19 @@ $(document).ready(function() {
                     $(`#friend${ownerId}`).remove();
                     $(`#newfriendList`).prepend(newFriend);
                     $('#addNewChat').modal('hide');
-                    activeUser(ownerId , id);
+                    activeUser(ownerId, id);
                 }
             }
         });
     }
 
 
-    $(document).delegate("#messageSubmit", "click", function(event){
-        var id = $(this).data().id ;
-        var userId =  new_authId;
+    $(document).delegate("#messageSubmit", "click", function (event) {
+        var id = $(this).data().id;
+        var userId = new_authId;
         messageSubmit(id, userId);
     })
+
     function messageSubmit(id, authId) {
 
         let message = $('.message').val();
@@ -372,21 +430,20 @@ $(document).ready(function() {
                                                     </div>
                                                 </a>
                                         </li>`;
-                    $('.message').val('');
+                    $('.message').val();
                     $('.emojionearea-editor').html('');
-                    $('#messageError').html('');
+                    $('#messageError').html();
                     $('#senderAppend').append(right)
                     $(`#newFriend${response.chat.receiver.id}`).remove();
                     $('#newfriendList').prepend(userList);
-
+                    scrollBottom();
                 }, error: function (xhr) {
                 }
             });
         }
 
     }
-
-
+    // $('#user-status-carousel').html("<p>hello</p>");
 });
 
 

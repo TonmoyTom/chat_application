@@ -171,12 +171,12 @@
         toastr.error(message, title);
     }
 
+    // $(window).load(function() {
+    //     $("html, body").animate({ scrollTop: $(document).height() }, 1000);
+    // });
 
 
 
-    // window.addEventListener('DOMContentLoaded',function() {
-    //
-    // })
 </script>
 
 </body>

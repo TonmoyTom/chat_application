@@ -1,6 +1,6 @@
 <ul class="list-unstyled chat-list chat-user-list">
     @forelse($users as $user)
-        <li id="contact{{$user->id}}">
+        <li id="contact{{$user->id}}" class="activeUser" data-id="{{$user->id  }}">
             <a href="#" >
                 <div class="d-flex">
                     <div class="chat-user-img away align-self-center me-3 ms-0">

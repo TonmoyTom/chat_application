@@ -19,5 +19,15 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 
 
 Broadcast::channel('private.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id ;
+    return (int)  $user->id === (int) $id ;
+
+});
+
+Broadcast::channel('chat', function ($user) {
+    $data = [
+        'name' => $user->name,
+        'id' => $user->id,
+        'photo_url' => setImage($user->photo_url)
+    ];
+   return $data;
 });
