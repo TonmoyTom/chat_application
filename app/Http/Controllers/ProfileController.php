@@ -271,4 +271,21 @@ class ProfileController extends Controller
         ], 202);
     }
 
+    public function anotherUserProfile(Request $request){
+        $userFind = User::find($request->id);
+        $id = $request->id;
+        $myMessage = \App\Models\Conversation:: where(function ($q) use ($id){
+            $q->where('to_id', $id);
+            $q->where('from_id', auth()->id());
+        })->where('message_type', 1)->pluck('id')->toArray();
+        $anotherMessage =  \App\Models\Conversation:: where(function ($q) use ($id){
+            $q->where('to_id', auth()->id());
+            $q->where('from_id', $id);
+        })->where('message_type', 1)->pluck('id')->toArray();
+        $uniqueIds  = array_unique(array_merge($myMessage , $anotherMessage));
+        $imgaes = Conversation::whereIn('id' , $uniqueIds)->get();
+
+        return \view('ajax.sidebar.another-profile' , compact('userFind' , 'imgaes'));
+    }
+
 }

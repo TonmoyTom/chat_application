@@ -24,7 +24,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
 //            $data = User::first();
-        event(new  \App\Events\Demo(auth()->user()));
+//        event(new  \App\Events\Demo(auth()->user()));
     DB::statement("SET SESSION sql_mode=''");
    $messages  = \App\Models\Conversation::where(function ($q){
         $q->where('from_id',  auth()->id());
@@ -33,6 +33,7 @@ Route::get('/dashboard', function () {
        ->select('to_id' , 'from_id' , 'message', 'reply_to')
        ->orderBy('id', 'desc')
        ->get();
+
 
     $usedUserIds = [];
     foreach ($messages as $message) {
@@ -79,7 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/my-contact', [ProfileController::class, 'myContact'])->name('my.contact');
     Route::post('/message-user-find', [ProfileController::class, 'messageUserFriend'])->name('message.user.find');
     Route::post('/message-user-send', [ProfileController::class, 'messageUserSend'])->name('message.user.send');
-    Route::post('/file-upload', [ProfileController::class, 'fileUpload'])->name('file.upload');
+    Route::post('/another-user-profile', [ProfileController::class, 'anotherUserProfile'])->name('another.user.profile');
 
 });
 

@@ -1,4 +1,4 @@
-<div class="p-3 p-lg-4 border-bottom user-chat-topbar"  >
+<div class="p-3 p-lg-4 border-bottom user-chat-topbar">
     <div class="row align-items-center">
         <div class="col-sm-4 col-8">
             <div class="d-flex align-items-center">
@@ -11,7 +11,8 @@
                 </div>
                 <div class="flex-grow-1 overflow-hidden">
                     <h5 class="font-size-16 mb-0 text-truncate"><a href="#"
-                                                                   class="text-reset user-profile-show" id="nameClick">{{ @$user->name }}</a>
+                                                                   class="text-reset user-profile-show"
+                                                                   id="nameClick">{{ @$user->name }}</a>
                         <i class="ri-record-circle-fill font-size-10 text-success d-inline-block ms-1"></i></h5>
                 </div>
             </div>
@@ -34,11 +35,10 @@
 
 
                 <li class="list-inline-item d-none d-lg-inline-block me-2 ms-0">
-                    <button type="button" class="btn nav-btn user-profile-show">
+                    <button type="button" class="btn nav-btn user-profile-show" data-id="{{ @$user->id }}">
                         <i class="ri-user-2-line"></i>
                     </button>
                 </li>
-
                 <li class="list-inline-item">
                     <div class="dropdown">
                         <button class="btn nav-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
@@ -66,7 +66,7 @@
         </div>
     </div>
 </div>
-<div class="chat-conversation p-3 p-lg-4" data-simplebar="init" >
+<div class="chat-conversation p-3 p-lg-4" data-simplebar="init">
     <ul class="list-unstyled mb-0" id="senderAppend">
 
         @foreach($messages as $message)
@@ -83,14 +83,17 @@
                                 <div class="ctext-wrap-content">
                                     @if($message->message_type == 1)
                                         <div>
-                                            <a class="popup-img d-inline-block m-1" href="{{ setImage($message->file_name) }}" title="Project 1">
-                                                <img src="{{ setImage($message->file_name) }}" alt="" class="rounded border" width="150" height="100">
+                                            <a class="popup-img d-inline-block m-1"
+                                               href="{{ setImage($message->file_name) }}" title="Project 1">
+                                                <img src="{{ setImage($message->file_name) }}" alt=""
+                                                     class="rounded border" width="150" height="100">
                                             </a>
                                         </div>
                                         <div class="message-img-link">
                                             <ul class="list-inline mb-0">
                                                 <li class="list-inline-item">
-                                                    <a download="img-1.jpg" href="{{ setImage($message->file_name) }}" class="fw-medium">
+                                                    <a download="img-1.jpg" href="{{ setImage($message->file_name) }}"
+                                                       class="fw-medium">
                                                         <i class="ri-download-2-line"></i>
                                                     </a>
                                                 </li>
@@ -141,14 +144,17 @@
 
                                     @if($message->message_type == 1)
                                         <div>
-                                            <a class="popup-img d-inline-block m-1" href="{{ setImage($message->file_name) }}" title="Project 1">
-                                                <img src="{{ setImage($message->file_name) }}" alt="" class="rounded border" width="150" height="100">
+                                            <a class="popup-img d-inline-block m-1"
+                                               href="{{ setImage($message->file_name) }}" title="Project 1">
+                                                <img src="{{ setImage($message->file_name) }}" alt=""
+                                                     class="rounded border" width="150" height="100">
                                             </a>
                                         </div>
                                         <div class="message-img-link">
                                             <ul class="list-inline mb-0">
                                                 <li class="list-inline-item">
-                                                    <a download="img-1.jpg" href="{{ setImage($message->file_name) }}" class="fw-medium">
+                                                    <a download="img-1.jpg" href="{{ setImage($message->file_name) }}"
+                                                       class="fw-medium">
                                                         <i class="ri-download-2-line"></i>
                                                     </a>
                                                 </li>
@@ -159,9 +165,9 @@
                                             {{ $message->message }}
                                         </p>
                                     @endif
-                                        <p class="chat-time mb-0"><i class="ri-time-line align-middle"></i> <span
-                                                class="align-middle">{{ \Carbon\Carbon::parse($message->created_at)->format('g:i A') }}</span>
-                                        </p>
+                                    <p class="chat-time mb-0"><i class="ri-time-line align-middle"></i> <span
+                                            class="align-middle">{{ \Carbon\Carbon::parse($message->created_at)->format('g:i A') }}</span>
+                                    </p>
                                 </div>
                                 <div class="dropdown align-self-start">
                                     <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -190,13 +196,14 @@
         @endforeach
     </ul>
     <p id="scroll-bottom"></p>
-{{--    <a href="#"></a>--}}
+    {{--    <a href="#"></a>--}}
 </div>
 <div class="chat-input-section p-3 p-lg-4 border-top mb-0">
     <div class="row g-0">
         <div class="col">
             <input type="text" class="form-control form-control-lg bg-light border-light message" id="emoji1"
-                   placeholder="Enter Message...">
+                   placeholder="Enter Message..." data-id="{{ $user->id }}">
+            <input type="hidden" id="emoji1ToId" value="{{ $user->id }}">
             <p id="messageError" style="color: red"></p>
         </div>
         <div class="col-auto">
@@ -221,6 +228,8 @@
         </div>
     </div>
 </div>
+
+
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -359,8 +368,6 @@
             }, error: function (xhr) {
             }
         });
-
-
 
 
     });

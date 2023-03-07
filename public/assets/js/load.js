@@ -248,11 +248,12 @@ $(document).ready(function () {
         .joining((user) => {
             users.push(user);
             console.log(users)
+
             var onlineUserData = '';
-             onlineUserData += `<div class="owl-stage-outer">
+            onlineUserData += `<div class="owl-stage-outer">
                     <div class="owl-stage" style="transform: translate3d(0px, 0px, 0px); transition: all 0s ease 0s; width: 87px;display: inline-flex;">`;
             $.each(users, function (key, onlineUser) {
-                onlineUserData += `<div class="owl-item active activeUser" style="width: 71px; margin-right: 16px;" data-id="${onlineUser.id}" >
+                onlineUserData += `<div class="owl-item active activeUser" id="leaving${onlineUser.id}" style="width: 71px; margin-right: 16px;" data-id="${onlineUser.id}" >
                             <div class="item">
                                 <a href="#" class="user-status-box">
                                     <div class="avatar-xs mx-auto d-block chat-user-img online">
@@ -265,6 +266,9 @@ $(document).ready(function () {
             });
             onlineUserData += `</div></div>`;
             $('#user-status-carousel').html(onlineUserData);
+        })
+        .leaving(user => {
+            users = users.filter(u => u.id != user.id);
         })
         .listen('Demo', (e) => {
             console.log(e);
@@ -304,10 +308,12 @@ $(document).ready(function () {
                 $(`#newFriend${new_id}`).addClass('singleActive');
                 $('#messageList').html(response)
                 $('#addNewChat').modal('hide');
+                hideUserProfile();
             }, error: function (xhr) {
             }
         });
     }
+
     $(document).delegate(".addFriend", "click", function (event) {
         var id = new_authId;
         var ownerId = $(this).data().id;
@@ -348,6 +354,7 @@ $(document).ready(function () {
                     $(`#newfriendList`).prepend(newFriend);
                     $('#addNewChat').modal('hide');
                     activeUser(ownerId, id);
+                    hideUserProfile();
                 }
             }
         });
@@ -360,9 +367,26 @@ $(document).ready(function () {
         messageSubmit(id, userId);
     })
 
-    function messageSubmit(id, authId) {
+    $(document).delegate(".message", "keyup", function (event) {
+        event.preventDefault();
 
-        let message = $('.message').val();
+        var messsage =  $('#emoji1').data("emojioneArea").getText();
+        if (event.key === "Enter") {
+            var id = $('#emoji1ToId').val();
+            var userId = new_authId;
+            messageSubmit(id, userId, messsage);
+        }
+    })
+
+    function messageSubmit(id, authId, messageValue) {
+
+        if(messageValue == undefined ){
+            var message =  $('.message').val();
+        }else{
+            var message =  messageValue;
+        }
+        console.log(id , authId , message );
+
         if (message.length === 0) {
             $('#messageError').html('Please Must Be Data Set');
         } else {
@@ -443,7 +467,34 @@ $(document).ready(function () {
         }
 
     }
+
     // $('#user-status-carousel').html("<p>hello</p>");
+
+    $(document).delegate(".user-profile-show", "click", function (event) {
+
+        var id = $(this).data().id;
+        $.ajax({
+            method: 'post',
+            url: '/another-user-profile',
+            data: {
+                id: id,
+                '_token': csrf
+            },
+            dataType: "html",
+            success: function (response) {
+                $("#sideBarUser").toggle();
+                $('#sideBarUser').html(response)
+            }, error: function (xhr) {
+            }
+        });
+    })
+    $(document).delegate("#user-profile-hide", "click", function (event) {
+        hideUserProfile();
+    })
+
+    function hideUserProfile() {
+        $(".user-profile-sidebar").css('display', 'none');
+    }
 });
 
 

@@ -1,7 +1,8 @@
 <?php
 
-function errorCheck($value){
-     return (@$value != null) ? $value  : "Not Found Data";
+function errorCheck($value)
+{
+    return (@$value != null) ? $value : "Not Found Data";
 }
 
 function uploadFile($file, $folder = '/'): ?string
@@ -12,6 +13,7 @@ function uploadFile($file, $folder = '/'): ?string
     }
     return null;
 }
+
 function setImage($url = null, $type = null, $default_image = true): string
 {
     return ($url != null) ? asset('storage/' . $url) : ($default_image ? asset('default/default_image.png') : '');
@@ -20,30 +22,40 @@ function setImage($url = null, $type = null, $default_image = true): string
 
 function lastMessage($id)
 {
-    $message = \App\Models\Conversation::where('to_id', $id)->orWhere('from_id', $id)->latest()->first();
+    $message = \App\Models\Conversation::where(function ($q) use ($id) {
+        $q->where('to_id', $id);
+        $q->where('from_id', auth()->id());
+    })->orWhere(function ($q) use ($id) {
+        $q->where('to_id', auth()->id());
+        $q->where('from_id', $id);
+    })->latest()->first();
     if ($message != null) {
         return $message;
     } else {
         return '';
     }
 }
-function lastMessageDate($id){
-    $message  = \App\Models\Conversation::where('to_id', $id)->orWhere('from_id', $id)->latest()->first();
-    if($message != null){
+
+function lastMessageDate($id)
+{
+    $message = \App\Models\Conversation::where('to_id', $id)->orWhere('from_id', $id)->latest()->first();
+    if ($message != null) {
         $totalDuration = \Carbon\Carbon::now()->diffInSeconds($message->created_at);
         $second = \Carbon\CarbonInterval::seconds($totalDuration)->cascade()->forHumans();
         return $second;
-    }else {
+    } else {
         return '';
     }
 
 }
-function messageDate($value){
-    if($value != null){
+
+function messageDate($value)
+{
+    if ($value != null) {
         $totalDuration = \Carbon\Carbon::now()->diffInSeconds($value);
         $second = \Carbon\CarbonInterval::seconds($totalDuration)->cascade()->forHumans();
         return $second;
-    }else {
+    } else {
         return '';
     }
 
