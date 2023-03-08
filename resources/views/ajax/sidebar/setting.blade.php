@@ -258,7 +258,12 @@
             extensions: ['.jpg', '.JPG', '.jpeg', '.JPEG', '.png', '.PNG', '.svg', '.SVG', '.gif', '.GIF'],
         }
     );
-    emoji()
+
+    $('#emoji').emojioneArea({
+        emojiPlaceholder: ":smile_cat:",
+        search: false,
+        inline: true
+    });
 
     function personalEditData(value) {
         $('#oldInformation').css('display', 'none');

@@ -13,7 +13,8 @@
                     <h5 class="font-size-16 mb-0 text-truncate"><a href="#"
                                                                    class="text-reset user-profile-show"
                                                                    id="nameClick">{{ @$user->name }}</a>
-                        <i class="ri-record-circle-fill font-size-10 text-success d-inline-block ms-1"></i></h5>
+                        <i class="ri-record-circle-fill font-size-10 text-warning d-inline-block ms-1" id="onlineChatCheck{{  @$user->id }}"></i>
+                    </h5>
                 </div>
             </div>
         </div>
@@ -67,8 +68,7 @@
     </div>
 </div>
 <div class="chat-conversation p-3 p-lg-4" data-simplebar="init">
-    <ul class="list-unstyled mb-0" id="senderAppend">
-
+    <ul class="list-unstyled mb-0 senderAppendTo{{$id}}" id="senderAppend">
         @foreach($messages as $message)
             @if($message->to_id != $id)
                 {{--        Reciver        --}}
@@ -195,7 +195,6 @@
             @endif
         @endforeach
     </ul>
-    <p id="scroll-bottom"></p>
     {{--    <a href="#"></a>--}}
 </div>
 <div class="chat-input-section p-3 p-lg-4 border-top mb-0">
@@ -256,6 +255,7 @@
     </div>
 </div>
 <script>
+
     $(document).ready(function () {
         var ChatDiv = $('.simplebar-content-wrapper');
         var height = ChatDiv[3].scrollHeight;

@@ -5,7 +5,7 @@
 <li id="newFriend{{ $user['user_id'] }}" data-id="{{$user['user_id'] }}"  class="activeUser">
     <a href="#">
         <div class="d-flex">
-            <div class="chat-user-img online align-self-center me-3 ms-0">
+            <div class="chat-user-img away align-self-center me-3 ms-0" id="onlineCheck{{$user['user_id']}}">
                 <img src=" {{ setImage(@$user['photo_url']) }}" class="rounded-circle avatar-xs" alt="">
                 <span class="user-status"></span>
             </div>

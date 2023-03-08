@@ -24,7 +24,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
 //            $data = User::first();
-//        event(new  \App\Events\Demo(auth()->user()));
+        event(new  \App\Events\Demo());
     DB::statement("SET SESSION sql_mode=''");
    $messages  = \App\Models\Conversation::where(function ($q){
         $q->where('from_id',  auth()->id());

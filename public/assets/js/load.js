@@ -214,6 +214,7 @@ $(document).ready(function () {
                         </div>
                     </div>
                 </li>`;
+
             let userList =
                 `<li id="newFriend${anotherMessage.chat.sender.id}" data-id="${anotherMessage.chat.sender.id}"  class="activeUser singleActive">
                     <a href="#">
@@ -235,20 +236,18 @@ $(document).ready(function () {
             $('.message').val();
             $('.emojionearea-editor').html();
             $('#messageError').html();
-            $('#senderAppend').append(right);
+            console.log(anotherMessage.chat.from_id);
+            $(`.senderAppendTo${anotherMessage.chat.from_id}`).append(right);
             $(`#newFriend${anotherMessage.chat.sender.id}`).remove();
             $('#newfriendList').prepend(userList);
             $(`.singleActive`).removeClass('singleActive');
             $(`#newFriend${anotherMessage.chat.sender.id}`).addClass('singleActive');
             scrollBottom();
-
-
         });
-    window.Echo.join(`chat`)
+        window.Echo.join(`chat`)
         .joining((user) => {
             users.push(user);
             console.log(users)
-
             var onlineUserData = '';
             onlineUserData += `<div class="owl-stage-outer">
                     <div class="owl-stage" style="transform: translate3d(0px, 0px, 0px); transition: all 0s ease 0s; width: 87px;display: inline-flex;">`;
@@ -262,10 +261,16 @@ $(document).ready(function () {
                                     </div>
                                     <h5 class="font-size-13 text-truncate mt-3 mb-1">${onlineUser.name}</h5>
                                 </a>
-                            </div></div>`
+                            </div></div>`;
+                $(`#onlineCheck${onlineUser.id}`).removeClass('away');
+                $(`#onlineCheck${onlineUser.id}`).addClass('online');
+
+                $(`#onlineChatCheck${onlineUser.id}`).removeClass('text-warning');
+                $(`#onlineChatCheck${onlineUser.id}`).addClass('text-success');
             });
             onlineUserData += `</div></div>`;
             $('#user-status-carousel').html(onlineUserData);
+
         })
         .leaving(user => {
             users = users.filter(u => u.id != user.id);
@@ -291,8 +296,8 @@ $(document).ready(function () {
     activeUser(new_id, new_authId);
 
     function activeUser(new_id, new_authId) {
-        console.log("ello");
-        var echo = window.Echo;
+        // console.log("ello");
+        // var echo = window.Echo;
         $.ajax({
             method: 'post',
             url: '/message-user-find',
@@ -308,7 +313,12 @@ $(document).ready(function () {
                 $(`#newFriend${new_id}`).addClass('singleActive');
                 $('#messageList').html(response)
                 $('#addNewChat').modal('hide');
+                $.each(users, function (key, onlineUser) {
+                    $(`#onlineChatCheck${onlineUser.id}`).removeClass('text-warning');
+                    $(`#onlineChatCheck${onlineUser.id}`).addClass('text-success');
+                });
                 hideUserProfile();
+
             }, error: function (xhr) {
             }
         });
@@ -370,7 +380,7 @@ $(document).ready(function () {
     $(document).delegate(".message", "keyup", function (event) {
         event.preventDefault();
 
-        var messsage =  $('#emoji1').data("emojioneArea").getText();
+        var messsage = $('#emoji1').data("emojioneArea").getText();
         if (event.key === "Enter") {
             var id = $('#emoji1ToId').val();
             var userId = new_authId;
@@ -380,12 +390,12 @@ $(document).ready(function () {
 
     function messageSubmit(id, authId, messageValue) {
 
-        if(messageValue == undefined ){
-            var message =  $('.message').val();
-        }else{
-            var message =  messageValue;
+        if (messageValue == undefined) {
+            var message = $('.message').val();
+        } else {
+            var message = messageValue;
         }
-        console.log(id , authId , message );
+        console.log(id, authId, message);
 
         if (message.length === 0) {
             $('#messageError').html('Please Must Be Data Set');
