@@ -60,16 +60,20 @@
     </div>
 @endsection
 
-@push('script')
-    <script>
-        // $(document).ready(function () {
+{{--@push('script')--}}
+{{--    <script>--}}
+{{--        $(document).ready(function () {--}}
 
-        // window.Echo.join(`private`)
-        //     .listen('MessageSend', (e) => {
-        //         console.log(    e);
-        //     });
-        // });
-    </script>
-@endpush
+{{--            var auth_id = '{{ auth()->id() }}'--}}
+{{--            window.Echo.join(`online-user`)--}}
+{{--                .joining((user) => {--}}
+{{--                    console.log("Hello", user)--}}
+{{--                })--}}
+{{--                .listen(`OnlineUser`, (e) => {--}}
+{{--                    console.log("Hello_messa", e)--}}
+{{--                });--}}
+{{--        });--}}
+{{--    </script>--}}
+{{--@endpush--}}
 
 

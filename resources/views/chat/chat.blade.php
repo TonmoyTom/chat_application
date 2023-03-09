@@ -1,3 +1,5 @@
+
+@if($user != null)
 <div class="p-3 p-lg-4 border-bottom user-chat-topbar">
     <div class="row align-items-center">
         <div class="col-sm-4 col-8">
@@ -201,8 +203,8 @@
     <div class="row g-0">
         <div class="col">
             <input type="text" class="form-control form-control-lg bg-light border-light message" id="emoji1"
-                   placeholder="Enter Message..." data-id="{{ $user->id }}">
-            <input type="hidden" id="emoji1ToId" value="{{ $user->id }}">
+                   placeholder="Enter Message..." data-id="{{ @$user->id }}">
+            <input type="hidden" id="emoji1ToId" value="{{ @$user->id }}">
             <p id="messageError" style="color: red"></p>
         </div>
         <div class="col-auto">
@@ -215,7 +217,7 @@
                         </button>
                     </li>
                     <li class="list-inline-item">
-                        <button type="button" id="messageSubmit" data-id="{{ $user->id }}"
+                        <button type="button" id="messageSubmit" data-id="{{ @$user->id }}"
                                 class="btn btn-primary font-size-16 btn-lg chat-send waves-effect waves-light"
                         >
                             <i class="ri-send-plane-2-fill"></i>
@@ -227,8 +229,6 @@
         </div>
     </div>
 </div>
-
-
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -242,7 +242,7 @@
                     <div class="mb-3">
                         <label for="formFile" class="form-label">Default file input example</label>
                         <input class="form-control" type="file" name="fromFile" id="formFile">
-                        <input type="hidden" name="user_id" id="user_id" value="{{ $user->id }}">
+                        <input type="hidden" name="user_id" id="user_id" value="{{ @$user->id }}">
                         <input type="hidden" name="auth_id" id="auth_id" value="{{ auth()->id() }}">
                     </div>
                 </div>
@@ -254,6 +254,7 @@
         </div>
     </div>
 </div>
+
 <script>
 
     $(document).ready(function () {
@@ -373,3 +374,4 @@
     });
 
 </script>
+@endif

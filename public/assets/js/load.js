@@ -246,13 +246,24 @@ $(document).ready(function () {
         });
         window.Echo.join(`chat`)
         .joining((user) => {
-            users.push(user);
-            console.log(users)
-            var onlineUserData = '';
-            onlineUserData += `<div class="owl-stage-outer">
+            // axios.put('/api/user/'+ user.id +'/offline?api_token=' + user.api_token, {});
+            $.ajax({
+                method: 'post',
+                url: '/online-user',
+                data: {
+                    id: user.id,
+                    '_token': csrf
+                },
+                success: function ( response) {
+                    if(response != ""){
+                        console.log(response);
+                        users.push(response);
+                        var onlineUserData = '';
+                        onlineUserData += `<div class="owl-stage-outer">
                     <div class="owl-stage" style="transform: translate3d(0px, 0px, 0px); transition: all 0s ease 0s; width: 87px;display: inline-flex;">`;
-            $.each(users, function (key, onlineUser) {
-                onlineUserData += `<div class="owl-item active activeUser" id="leaving${onlineUser.id}" style="width: 71px; margin-right: 16px;" data-id="${onlineUser.id}" >
+                        $.each(users, function (key, onlineUser) {
+                            // if(onlineUser.id != new_authId){
+                            onlineUserData += `<div class="owl-item active activeUser" id="leaving${onlineUser.id}" style="width: 71px; margin-right: 16px;" data-id="${onlineUser.id}" >
                             <div class="item">
                                 <a href="#" class="user-status-box">
                                     <div class="avatar-xs mx-auto d-block chat-user-img online">
@@ -262,15 +273,20 @@ $(document).ready(function () {
                                     <h5 class="font-size-13 text-truncate mt-3 mb-1">${onlineUser.name}</h5>
                                 </a>
                             </div></div>`;
-                $(`#onlineCheck${onlineUser.id}`).removeClass('away');
-                $(`#onlineCheck${onlineUser.id}`).addClass('online');
+                            $(`#onlineCheck${onlineUser.id}`).removeClass('away');
+                            $(`#onlineCheck${onlineUser.id}`).addClass('online');
 
-                $(`#onlineChatCheck${onlineUser.id}`).removeClass('text-warning');
-                $(`#onlineChatCheck${onlineUser.id}`).addClass('text-success');
+                            $(`#onlineChatCheck${onlineUser.id}`).removeClass('text-warning');
+                            $(`#onlineChatCheck${onlineUser.id}`).addClass('text-success');
+                            // }
+
+                        });
+                        onlineUserData += `</div></div>`;
+                        $('#user-status-carousel').html(onlineUserData);
+                    }
+
+                }
             });
-            onlineUserData += `</div></div>`;
-            $('#user-status-carousel').html(onlineUserData);
-
         })
         .leaving(user => {
             users = users.filter(u => u.id != user.id);

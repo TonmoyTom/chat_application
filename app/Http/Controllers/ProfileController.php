@@ -288,4 +288,20 @@ class ProfileController extends Controller
         return \view('ajax.sidebar.another-profile' , compact('userFind' , 'imgaes'));
     }
 
+    public function onlineUser(Request $request){
+        $chatRequestFrom = \App\Models\ChatRequest::where('from_id' , auth()->id())->pluck('owner_id')->toArray();
+        $chatRequestOwner = \App\Models\ChatRequest::where('owner_id' , auth()->id())->pluck('from_id')->toArray();
+        $chatRequestId = array_unique(array_merge($chatRequestFrom, $chatRequestOwner));
+        $users = User::where('id' , '!=' , \auth()->id())->whereIn('id' , $chatRequestId)->orderBy('id' , 'desc')->pluck('id')->toArray();
+        if(in_array($request->id , $users) == true){
+            $user = User::where('id' ,  $request->id)->first();
+            $data = [
+                'name' => $user->name,
+                'id' => $user->id,
+                'photo_url' => setImage($user->photo_url)
+            ];
+            return  $data;
+        }
+    }
+
 }

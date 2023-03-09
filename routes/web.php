@@ -23,8 +23,11 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-//            $data = User::first();
+    $user = auth()->user();
+    $onlineUser = $user->chatRequest()->where('from_id' , auth()->id())->get()->toArray();
+//    dd($onlineUser , auth()->user());
         event(new  \App\Events\Demo());
+        event(new  \App\Events\OnlineUser(auth()->user()));
     DB::statement("SET SESSION sql_mode=''");
    $messages  = \App\Models\Conversation::where(function ($q){
         $q->where('from_id',  auth()->id());
@@ -81,6 +84,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/message-user-find', [ProfileController::class, 'messageUserFriend'])->name('message.user.find');
     Route::post('/message-user-send', [ProfileController::class, 'messageUserSend'])->name('message.user.send');
     Route::post('/another-user-profile', [ProfileController::class, 'anotherUserProfile'])->name('another.user.profile');
+    Route::post('/online-user', [ProfileController::class, 'onlineUser'])->name('online.user');
 
 });
 

@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class Demo implements ShouldBroadcast
+class OnlineUser
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,9 +19,10 @@ class Demo implements ShouldBroadcast
      *
      * @return void
      */
-    public $message;
-    public function __construct()
+    public $user;
+    public function __construct($user)
     {
+        $this->user = $user;
     }
 
     /**
@@ -31,6 +32,12 @@ class Demo implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('chat');
+//        return new Channel('chat');
+        return new PresenceChannel('online-user');
+    }
+
+    public function broadcastWith()
+    {
+        return $this->user;
     }
 }

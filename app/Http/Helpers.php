@@ -49,7 +49,8 @@ function lastMessageDate($id)
 {
     $message = \App\Models\Conversation::where('to_id', $id)->orWhere('from_id', $id)->latest()->first();
     if ($message != null) {
-
+        $totalDuration = \Carbon\Carbon::now()->diffInSeconds($message->created_at);
+        $second = \Carbon\CarbonInterval::seconds($totalDuration)->cascade()->forHumans();
         return $second;
     } else {
         return '';
