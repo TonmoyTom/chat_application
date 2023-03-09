@@ -38,8 +38,8 @@
                 <img src="chat-assets/images/users/avatar-1.jpg" alt="" class="profile-user rounded-circle">
             </a>
             <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">Profile <i class="ri-profile-line float-end text-muted"></i></a>
-                <a class="dropdown-item" href="#">Setting <i class="ri-settings-3-line float-end text-muted"></i></a>
+{{--                <a class="dropdown-item" href="#">Profile <i class="ri-profile-line float-end text-muted"></i></a>--}}
+{{--                <a class="dropdown-item" href="#">Setting <i class="ri-settings-3-line float-end text-muted"></i></a>--}}
                 <div class="dropdown-divider"></div>
                 <form method="POST" action="{{ route('logout') }}" style="cursor: pointer">
                     @csrf

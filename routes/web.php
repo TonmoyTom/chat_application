@@ -86,6 +86,7 @@ Route::middleware('auth')->group(function () {
          Route::post('/my-contact', [ChatController::class, 'myContact'])->name('my.contact');
          Route::post('/message-user-find', [ChatController::class, 'messageUserFriend'])->name('message.user.find');
          Route::post('/message-user-send', [ChatController::class, 'messageUserSend'])->name('message.user.send');
+         Route::post('/file-upload', [ChatController::class, 'fileUpload'])->name('file-upload');
          Route::post('/another-user-profile', [ChatController::class, 'anotherUserProfile'])->name('another.user.profile');
          Route::post('/online-user', [ChatController::class, 'onlineUser'])->name('online.user');
          Route::post('/user-search', [ChatController::class, 'userSearch'])->name('user.search');
