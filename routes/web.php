@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use \App\Http\Controllers\Chat\ChatController;
 use App\Models\Conversation;
 use App\Models\User;
 use Illuminate\Database\Query\JoinClause;
@@ -21,8 +22,11 @@ use Illuminate\Database\Eloquent\Builder;
 Route::get('/', function () {
     return view('welcome');
 });
-
 Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('home');;
+
+Route::get('/chat-dashboard', function () {
     $user = auth()->user();
     $onlineUser = $user->chatRequest()->where('from_id' , auth()->id())->get()->toArray();
 //    dd($onlineUser , auth()->user());
@@ -36,7 +40,6 @@ Route::get('/dashboard', function () {
        ->select('to_id' , 'from_id' , 'message', 'reply_to')
        ->orderBy('id', 'desc')
        ->get();
-
 
     $usedUserIds = [];
     foreach ($messages as $message) {
@@ -60,31 +63,33 @@ Route::get('/dashboard', function () {
     }else{
         $recentUsersWithMessage = [];
     }
-
-
-    return view('dashboard' , compact('recentUsersWithMessage' ));
+    return view('chat-user.dashboard' , compact('recentUsersWithMessage' ));
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
 //    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 //    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 //    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/profile', [ProfileController::class, 'profile'])->name('profile');
-    Route::post('/profile-edit', [ProfileController::class, 'updateProfile'])->name('edit.profile');
-    Route::post('/change-password', [ProfileController::class, 'changePassword'])->name('change.password');
-    Route::post('/image-upload', [ProfileController::class, 'imageUpload'])->name('image-upload');
-    Route::get('/image', [ProfileController::class, 'image'])->name('image');
-    Route::get('/setting', [ProfileController::class, 'setting'])->name('setting');
-    Route::post('/photo-see', [ProfileController::class, 'photoSee'])->name('setting');
-    Route::post('/seen-show-hide', [ProfileController::class, 'showHide'])->name('show.hide');
-    Route::post('/subscribed', [ProfileController::class, 'isSubscribed'])->name('subscribed');
-    Route::post('/user-list', [ProfileController::class, 'userList'])->name('user.list');
-    Route::post('/add-friend', [ProfileController::class, 'addFriend'])->name('add.friend');
-    Route::post('/my-contact', [ProfileController::class, 'myContact'])->name('my.contact');
-    Route::post('/message-user-find', [ProfileController::class, 'messageUserFriend'])->name('message.user.find');
-    Route::post('/message-user-send', [ProfileController::class, 'messageUserSend'])->name('message.user.send');
-    Route::post('/another-user-profile', [ProfileController::class, 'anotherUserProfile'])->name('another.user.profile');
-    Route::post('/online-user', [ProfileController::class, 'onlineUser'])->name('online.user');
+
+     Route::prefix('chat')->group(function(){
+         Route::get('/profile', [ChatController::class, 'profile'])->name('profile');
+         Route::post('/profile-edit', [ChatController::class, 'updateProfile'])->name('edit.profile');
+         Route::post('/change-password', [ChatController::class, 'changePassword'])->name('change.password');
+         Route::post('/image-upload', [ChatController::class, 'imageUpload'])->name('image-upload');
+         Route::get('/image', [ChatController::class, 'image'])->name('image');
+         Route::get('/setting', [ChatController::class, 'setting'])->name('setting');
+         Route::post('/photo-see', [ChatController::class, 'photoSee'])->name('setting');
+         Route::post('/seen-show-hide', [ChatController::class, 'showHide'])->name('show.hide');
+         Route::post('/subscribed', [ChatController::class, 'isSubscribed'])->name('subscribed');
+         Route::post('/user-list', [ChatController::class, 'userList'])->name('user.list');
+         Route::post('/add-friend', [ChatController::class, 'addFriend'])->name('add.friend');
+         Route::post('/my-contact', [ChatController::class, 'myContact'])->name('my.contact');
+         Route::post('/message-user-find', [ChatController::class, 'messageUserFriend'])->name('message.user.find');
+         Route::post('/message-user-send', [ChatController::class, 'messageUserSend'])->name('message.user.send');
+         Route::post('/another-user-profile', [ChatController::class, 'anotherUserProfile'])->name('another.user.profile');
+         Route::post('/online-user', [ChatController::class, 'onlineUser'])->name('online.user');
+     });
+
 
 });
 

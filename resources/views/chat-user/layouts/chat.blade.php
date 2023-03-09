@@ -47,6 +47,7 @@
         <!-- Start user status -->
         <div class="px-4 pb-4" dir="ltr">
             <div class="owl-carousel owl-theme" id="user-status-carousel" >
+
             </div>
             <!-- end user status carousel -->
         </div>
@@ -59,7 +60,7 @@
             <div class="chat-message-list px-2" data-simplebar>
 
                 <ul class="list-unstyled chat-list chat-user-list" id="newfriendList">
-                   @include('chat.user')
+                   @include('chat-user.chat.user')
                 </ul>
             </div>
         </div>

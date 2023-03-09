@@ -5,10 +5,10 @@ imgae();
 
 
 function profile() {
-    console.log("helo");
+
     $.ajax({
         method: 'get',
-        url: '/profile',
+        url: '/chat/profile',
         success: function (response) {
             $('#profileAjax').html(response);
         }, error: function (xhr) {
@@ -19,7 +19,7 @@ function profile() {
 function imgae() {
     $.ajax({
         method: 'get',
-        url: '/image',
+        url: '/chat/image',
         success: function (response) {
             $('#image').html(response);
         }, error: function (xhr) {
@@ -30,7 +30,7 @@ function imgae() {
 function setting() {
     $.ajax({
         method: 'get',
-        url: '/setting',
+        url: '/chat/setting',
         success: function (response) {
             $('#setting').html(response);
         }, error: function (xhr) {
@@ -41,7 +41,7 @@ function setting() {
 function photoSee(value) {
     $.ajax({
         method: 'post',
-        url: '/photo-see',
+        url: '/chat/photo-see',
         data: {
             value: value,
             '_token': csrf
@@ -61,7 +61,7 @@ function seenShow(value) {
     let seen = value;
     $.ajax({
         method: 'post',
-        url: '/seen-show-hide',
+        url: '/chat/seen-show-hide',
         data: {
             value: value,
             '_token': csrf
@@ -90,7 +90,7 @@ function notification() {
     }
     $.ajax({
         method: 'post',
-        url: '/subscribed',
+        url: '/chat/subscribed',
         data: {
             value: checkBox.value,
             '_token': csrf
@@ -110,7 +110,7 @@ function changePassword() {
     $.ajax({
         async: false,
         method: 'post',
-        url: 'change-password',
+        url: '/chat/change-password',
         data: {
             old_password: $("input[name='old_password']").val(),
             password: $("input[name='password']").val(),
@@ -153,6 +153,7 @@ $(document).ready(function () {
     let new_id = document.getElementById('new_user_id').value;
     var new_authId = document.getElementById('user_id').value;
     var users = [];
+    var newUsers = [];
     window.Echo.join(`private.${new_authId}`)
         .listen('MessageSend', (e) => {
             console.log(e);
@@ -244,23 +245,24 @@ $(document).ready(function () {
             $(`#newFriend${anotherMessage.chat.sender.id}`).addClass('singleActive');
             scrollBottom();
         });
-        window.Echo.join(`chat`)
+    window.Echo.join(`chat`)
         .joining((user) => {
             // axios.put('/api/user/'+ user.id +'/offline?api_token=' + user.api_token, {});
             $.ajax({
                 method: 'post',
-                url: '/online-user',
+                url: '/chat/online-user',
                 data: {
                     id: user.id,
                     '_token': csrf
                 },
-                success: function ( response) {
-                    if(response != ""){
+                success: function (response) {
+                    if (response != "") {
                         console.log(response);
                         users.push(response);
                         var onlineUserData = '';
                         onlineUserData += `<div class="owl-stage-outer">
-                    <div class="owl-stage" style="transform: translate3d(0px, 0px, 0px); transition: all 0s ease 0s; width: 87px;display: inline-flex;">`;
+                        <div class="owl-stage"
+                        style="transform: translate3d(0px, 0px, 0px); transition: all 0s ease 0s; width: 87px;display: inline-flex;">`;
                         $.each(users, function (key, onlineUser) {
                             // if(onlineUser.id != new_authId){
                             onlineUserData += `<div class="owl-item active activeUser" id="leaving${onlineUser.id}" style="width: 71px; margin-right: 16px;" data-id="${onlineUser.id}" >
@@ -275,9 +277,10 @@ $(document).ready(function () {
                             </div></div>`;
                             $(`#onlineCheck${onlineUser.id}`).removeClass('away');
                             $(`#onlineCheck${onlineUser.id}`).addClass('online');
-
                             $(`#onlineChatCheck${onlineUser.id}`).removeClass('text-warning');
                             $(`#onlineChatCheck${onlineUser.id}`).addClass('text-success');
+                            $(`#onlineCheckContact${onlineUser.id}`).removeClass('away');
+                            $(`#onlineCheckContact${onlineUser.id}`).addClass('online');
                             // }
 
                         });
@@ -287,11 +290,33 @@ $(document).ready(function () {
 
                 }
             });
+            $.each(users, function (key, onlineUser) {
+                $(`#newUserOnline${onlineUser.id}`).removeClass('away');
+                $(`#newUserOnline${onlineUser.id}`).addClass('online');
+
+            });
         })
         .leaving(user => {
             users = users.filter(u => u.id != user.id);
         })
         .listen('Demo', (e) => {
+            console.log(e);
+        });
+
+
+        window.Echo.join(`new-user`)
+        .joining((user) => {
+            console.log("hi", user)
+            newUsers.push(user)
+            $.each(newUsers, function (key, onlineUser) {
+                $(`#newUserOnline${onlineUser.id}`).removeClass('away');
+                $(`#newUserOnline${onlineUser.id}`).addClass('online');
+            });
+        })
+        .leaving(user => {
+            newUsers = newUsers.filter(u => u.id != user.id);
+        })
+        .listen('NewUser', (e) => {
             console.log(e);
         });
     $(document).delegate(".activeUser", "click", function (event) {
@@ -316,7 +341,7 @@ $(document).ready(function () {
         // var echo = window.Echo;
         $.ajax({
             method: 'post',
-            url: '/message-user-find',
+            url: '/chat/message-user-find',
             data: {
                 id: new_id,
                 authId: new_authId,
@@ -348,7 +373,7 @@ $(document).ready(function () {
 
     function addFriend(id, ownerId) {
         $.ajax({
-            url: "/add-friend",
+            url: "/chat/add-friend",
             data: {
                 "_token": csrf,
                 id: id,
@@ -363,7 +388,7 @@ $(document).ready(function () {
                         `<li id="newFriend${response.user.id}">
                                 <a href="#">
                                     <div class="d-flex">
-                                        <div class="chat-user-img online align-self-center me-3 ms-0">
+                                        <div class="chat-user-img away align-self-center me-3 ms-0" id="#newUserOnline${response.user.id}">
                                             <img src="${response.image}" class="rounded-circle avatar-xs" alt="">
                                             <span class="user-status"></span>
                                         </div>
@@ -419,7 +444,7 @@ $(document).ready(function () {
             $.ajax({
 
                 method: 'post',
-                url: '/message-user-send',
+                url: '/chat/message-user-send',
                 data: {
                     id: id,
                     authId: authId,
@@ -501,7 +526,7 @@ $(document).ready(function () {
         var id = $(this).data().id;
         $.ajax({
             method: 'post',
-            url: '/another-user-profile',
+            url: '/chat/another-user-profile',
             data: {
                 id: id,
                 '_token': csrf

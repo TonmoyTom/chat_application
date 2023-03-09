@@ -281,7 +281,7 @@
 
         $.ajax({
             method: 'post',
-            url: '/file-upload',
+            url: '/chat/file-upload',
             data: formData,
             cache: false,
             contentType: false,
@@ -374,4 +374,10 @@
     });
 
 </script>
+@else
+    <div class="card">
+        <div class="card-body">
+           No Chat Found
+        </div>
+    </div>
 @endif

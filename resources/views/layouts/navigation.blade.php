@@ -1,85 +1,116 @@
-
-<div class="navbar-brand-box">
-    <a href="{{ route('dashboard')}}" class="logo logo-dark">
-                        <span class="logo-sm">
-                            <img src="assets/images/logo.svg" alt="" height="30">
-                        </span>
-    </a>
-
-    <a href="{{ route('dashboard')}}" class="logo logo-light">
-                        <span class="logo-sm">
-                            <img src="assets/images/logo.svg" alt="" height="30">
-                        </span>
-    </a>
-</div>
-
-<div class="flex-lg-column my-auto">
-    <ul class="nav nav-pills side-menu-nav justify-content-center" role="tablist">
-        <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Profile">
-            <a class="nav-link" id="pills-user-tab" data-bs-toggle="pill" href="#pills-user" role="tab" onclick="profile()">
-                <i class="ri-user-2-line"></i>
-            </a>
-        </li>
-        <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Chats">
-            <a class="nav-link active" id="pills-chat-tab" data-bs-toggle="pill" href="#pills-chat" role="tab" >
-                <i class="ri-message-3-line"></i>
-            </a>
-        </li>
-        <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Groups">
-            <a class="nav-link" id="pills-groups-tab" data-bs-toggle="pill" href="#pills-groups" role="tab">
-                <i class="ri-group-line"></i>
-            </a>
-        </li>
-        <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Settings">
-            <a class="nav-link" id="pills-setting-tab" data-bs-toggle="pill" href="#pills-setting" role="tab" onclick="setting()">
-                <i class="ri-settings-2-line"></i>
-            </a>
-        </li>
-        <li class="nav-item dropdown profile-user-dropdown d-inline-block d-lg-none">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img src="assets/images/users/avatar-1.jpg" alt="" class="profile-user rounded-circle">
-            </a>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">Profile <i class="ri-profile-line float-end text-muted"></i></a>
-                <a class="dropdown-item" href="#">Setting <i class="ri-settings-3-line float-end text-muted"></i></a>
-                <div class="dropdown-divider"></div>
-                <form method="POST" action="{{ route('logout') }}" style="cursor: pointer">
-                    @csrf
-                    <a class="dropdown-item"
-                       onclick="event.preventDefault(); this.closest('form').submit();">Log out
-                        <i class="ri-logout-circle-r-line float-end text-muted"></i>
+<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+    <!-- Primary Navigation Menu -->
+    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16">
+            <div class="flex">
+                <!-- Logo -->
+                <div class="flex flex-shrink-0 items-center">
+                    <a href="{{ route('home') }}">
+                        <x-application-logo class="block w-auto h-10 text-gray-600 fill-current"/>
                     </a>
-                </form>
-
-            </div>
-        </li>
-    </ul>
-</div>
-<div class="flex-lg-column d-none d-lg-block">
-    <ul class="nav side-menu-nav justify-content-center">
-        <li class="nav-item">
-            <a class="nav-link light-dark-mode" href="#" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-placement="right" title="Dark / Light Mode">
-                <i class='ri-sun-line theme-mode-icon'></i>
-            </a>
-        </li>
-
-        <li class="nav-item btn-group dropup profile-user-dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <div id="image">
-
                 </div>
 
-            </a>
-            <div class="dropdown-menu">
-                <form method="POST" action="{{ route('logout') }}" style="cursor: pointer">
-                    @csrf
-                    <a class="dropdown-item"
-                       onclick="event.preventDefault(); this.closest('form').submit();">Log out
-                        <i class="ri-logout-circle-r-line float-end text-muted"></i>
-                    </a>
-                </form>
-
+                <!-- Navigation Links -->
+                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+                        {{ __('Chat') }}
+                    </x-nav-link>
+                </div>
             </div>
-        </li>
-    </ul>
-</div>
+
+            <!-- Settings Dropdown -->
+            <div class="hidden sm:flex sm:items-center sm:ml-6">
+                @auth
+                    <x-dropdown align="right" width="48">
+                        <x-slot name="trigger">
+                            <button
+                                class="flex items-center text-sm font-medium text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300">
+                                <div>{{ Auth::user()->name }}</div>
+
+                                <div class="ml-1">
+                                    <svg class="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg"
+                                         viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                              clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </button>
+                        </x-slot>
+
+                        <x-slot name="content">
+                            <!-- Authentication -->
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+
+                                <x-dropdown-link :href="route('logout')" onclick="event.preventDefault();
+                                                this.closest('form').submit();">
+                                    {{ __('Log Out') }}
+                                </x-dropdown-link>
+                            </form>
+                        </x-slot>
+                    </x-dropdown>
+                @else
+                    <a href="{{ route('login') }}" class="text-sm text-gray-700 underline dark:text-gray-500">Log in</a>
+
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}" class="ml-4 text-sm text-gray-700 underline dark:text-gray-500">Register</a>
+                    @endif
+                @endauth
+            </div>
+
+            <!-- Hamburger -->
+            <div class="flex items-center -mr-2 sm:hidden">
+                <button @click="open = ! open"
+                        class="inline-flex justify-center items-center p-2 text-gray-400 rounded-md transition duration-150 ease-in-out hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500">
+                    <svg class="w-6 h-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex"
+                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16"/>
+                        <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden"
+                              stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Responsive Navigation Menu -->
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
+        <!-- Responsive Settings Options -->
+        <div class="pt-4 pb-1 border-t border-gray-200">
+            @auth
+                <div class="px-4">
+                    <div class="text-base font-medium text-gray-800">{{ Auth::user()->name }}</div>
+                    <div class="text-sm font-medium text-gray-500">{{ Auth::user()->email }}</div>
+                </div>
+
+                <div class="mt-3 space-y-1">
+                    <x-responsive-nav-link :href="route('dashboard')">
+                        {{ __('Chat') }}
+                    </x-responsive-nav-link>
+                    <!-- Authentication -->
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+
+                        <x-responsive-nav-link :href="route('logout')" onclick="event.preventDefault();
+                                        this.closest('form').submit();">
+                            {{ __('Log Out') }}
+                        </x-responsive-nav-link>
+                    </form>
+                </div>
+            @else
+                <div class="space-y-1">
+                    <x-responsive-nav-link :href="route('login')">
+                        {{ __('Login') }}
+                    </x-responsive-nav-link>
+                    @if (Route::has('register'))
+                        <x-responsive-nav-link :href="route('register')">
+                            {{ __('Register') }}
+                        </x-responsive-nav-link>
+                    @endif
+                </div>
+            @endauth
+        </div>
+    </div>
+</nav>

@@ -71,7 +71,7 @@
                             <div id="name">
                                 <label class="text-muted mb-1">Name</label>
                                 <input class="form-control" value="{{ errorCheck(auth()->user()->name)  }}"
-                                       name="name" placeholder="Name">
+                                       name="name_new" placeholder="Name">
                                 <span id="nameError" class="errorClass"></span>
                             </div>
 
@@ -276,12 +276,14 @@
     }
 
     function editProfileSubmit() {
+
+        console.log( $("input[name='name']").val());
         $.ajax({
             async: false,
             method: 'post',
             url: '{{route('edit.profile')}}',
             data: {
-                name: $("input[name='name']").val(),
+                name: $("input[name='name_new']").val(),
                 email: $("input[name='email']").val(),
                 bio: $("textarea[name='bio']").val(),
                 address: $("textarea[name='address']").val(),
