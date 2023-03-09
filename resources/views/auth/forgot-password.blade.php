@@ -76,7 +76,7 @@
                         <p>Remember It ? <a href="{{ route('login') }}" class="fw-medium text-primary"> Signin </a></p>
                         <p>©
                             <script>document.write(new Date().getFullYear())</script>
-                            Chatvia. Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand
+                            {{ env('APP_NAME') }}. Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand
                         </p>
                     </div>
                 </div>
