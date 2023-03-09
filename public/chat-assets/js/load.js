@@ -544,7 +544,7 @@ $(document).ready(function () {
     $(document).delegate("#user-profile-hide", "click", function (event) {
         hideUserProfile();
     })
-    $(document).delegate("#search_user", "keyup", function (event) {
+    $(document).delegate(".search_users_data", "keyup", function (event) {
         var searchUser = $(this).val();
         var activeUser = users;
         $.ajax({

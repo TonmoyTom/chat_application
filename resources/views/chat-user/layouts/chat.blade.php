@@ -38,7 +38,7 @@
                                         <span class="input-group-text text-muted bg-light pe-1 ps-3" id="basic-addon1">
                                             <i class="ri-search-line search-icon font-size-18"></i>
                                         </span>
-                    <input type="text" class="form-control bg-light" placeholder="Search messages or users" id="search_user"
+                    <input type="text" class="form-control bg-light search_users_data" placeholder="Search messages or users"
                            aria-label="Search messages or users" aria-describedby="basic-addon1">
                 </div>
             </div> <!-- Search Box-->
