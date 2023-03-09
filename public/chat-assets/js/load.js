@@ -154,6 +154,7 @@ $(document).ready(function () {
     var new_authId = document.getElementById('user_id').value;
     var users = [];
     var newUsers = [];
+    var userIds = [];
     window.Echo.join(`private.${new_authId}`)
         .listen('MessageSend', (e) => {
             console.log(e);
@@ -259,6 +260,7 @@ $(document).ready(function () {
                     if (response != "") {
                         console.log(response);
                         users.push(response);
+                        userIds.push(response.id);
                         var onlineUserData = '';
                         onlineUserData += `<div class="owl-stage-outer">
                         <div class="owl-stage"
@@ -304,7 +306,7 @@ $(document).ready(function () {
         });
 
 
-        window.Echo.join(`new-user`)
+    window.Echo.join(`new-user`)
         .joining((user) => {
             console.log("hi", user)
             newUsers.push(user)
@@ -542,6 +544,146 @@ $(document).ready(function () {
     $(document).delegate("#user-profile-hide", "click", function (event) {
         hideUserProfile();
     })
+    $(document).delegate("#search_user", "keyup", function (event) {
+        var searchUser = $(this).val();
+        var activeUser = users;
+        $.ajax({
+            method: 'post',
+            url: '/chat/user-search',
+            data: {
+                id: id,
+                '_token': csrf,
+                'searchUser': searchUser,
+                // 'activeUser': activeUser,
+            },
+            dataType: "json",
+            success: function (response) {
+                var searchUserList = '';
+                console.log(userIds);
+                $.each(response.userSearch, function (key, user) {
+                    console.log(userIds.includes(user.user_id));
+                    if (userIds.includes(user.user_id) != true) {
+                        var onlineUser = 'away';
+                    } else {
+                        var onlineUser = 'online';
+                    }
+                    searchUserList +=
+                        ` <li id="newFriend${user.user_id}" data-id="${user.user_id}"  class="activeUser">
+                            <a href="#">
+                                <div class="d-flex">
+                                    <div class="chat-user-img align-self-center me-3 ms-0 ${onlineUser}" >
+                                        <img src="${user.photo_url}" class="rounded-circle avatar-xs" alt="">
+                                        <span class="user-status"></span>
+                                    </div>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <h5 class="text-truncate font-size-15 mb-1"> ${user.name}</h5>
+                                                <p class="chat-user-message text-truncate mb-0"> ${user.message}</p>
+                                    </div>
+                                    <div class="font-size-11">${user.date}</div>
+                                </div>
+                            </a>
+                        </li>`
+                });
+                $('#newfriendList').html(searchUserList)
+            }, error: function (xhr) {
+            }
+        });
+    })
+
+
+    $(document).delegate("#search_user_contact", "keyup", function (event) {
+        var userContactSearch = $(this).val();
+        var activeUser = users;
+        $.ajax({
+            method: 'post',
+            url: '/chat/user-search-contact',
+            data: {
+                id: id,
+                '_token': csrf,
+                'userContactSearch': userContactSearch,
+                // 'activeUser': activeUser,
+            },
+            dataType: "json",
+            success: function (response) {
+                var searchContactUserList = '';
+                console.log(userIds);
+                $.each(response.contactListUser, function (key, user) {
+                    console.log(userIds.includes(user.user_id));
+                    if (userIds.includes(user.user_id) != true) {
+                        var onlineUserContact =  'away';
+                    } else {
+                        var onlineUserContact =  'online';
+                    }
+                    searchContactUserList +=
+                        `  <li id="contact${user.id}" class="activeUser" data-id="${user.id}">
+                            <a href="#" >
+                                <div class="d-flex">
+                                    <div class="chat-user-img  ${onlineUserContact} align-self-center me-3 ms-0"  id="onlineCheckContact${user.id}">
+                                        <img src="${user.photo_url}" class="rounded-circle avatar-xs" alt="">
+                                        <span class="user-status"></span>
+                                    </div>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <h5 class="text-truncate font-size-15 mb-1"> ${user.name}</h5>
+                                        <p class="chat-user-message text-truncate mb-0">
+                                            <i class="ri-image-fill align-middle me-1 ms-0"></i> ${user.email}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>`
+                });
+                $('#contactList').html(searchContactUserList)
+            }, error: function (xhr) {
+            }
+        });
+    })
+
+    $(document).delegate("#search_user_contact_new", "keyup", function (event) {
+        var userNewContactSearch = $(this).val();
+        var activeUser = users;
+        $.ajax({
+            method: 'post',
+            url: '/chat/user-search-contact-new',
+            data: {
+                id: id,
+                '_token': csrf,
+                'userNewContactSearch': userNewContactSearch,
+                // 'activeUser': activeUser,
+            },
+            dataType: "json",
+            success: function (response) {
+                var searchNewContactUserList = '';
+                console.log(userIds);
+                $.each(response.contactListUserNew, function (key, user) {
+                    console.log(userIds.includes(user.user_id));
+                    if (userIds.includes(user.user_id) != true) {
+                       var onlineNewUserContact = 'away';
+                    } else {
+                        var onlineNewUserContact = 'online';
+                    }
+                    searchNewContactUserList +=
+                        `  <li id="contact${user.id}" class="activeUser" data-id="${user.id}">
+                            <a href="#" >
+                                <div class="d-flex">
+                                    <div class="chat-user-img  ${onlineNewUserContact} align-self-center me-3 ms-0"  id="newUserOnline${user.id}">
+                                        <img src="${user.photo_url}" class="rounded-circle avatar-xs" alt="">
+                                        <span class="user-status"></span>
+                                    </div>
+                                    <div class="flex-grow-1 overflow-hidden">
+                                        <h5 class="text-truncate font-size-15 mb-1"> ${user.name}</h5>
+                                        <p class="chat-user-message text-truncate mb-0">
+                                            <i class="ri-image-fill align-middle me-1 ms-0"></i> ${user.email}</p>
+                                    </div>
+                                     <button type="button"  class="btn btn-primary addFriend" data-id="${user.id}">Chat</button>
+                                </div>
+                            </a>
+                        </li>`
+                });
+                $('#new_contact_user_list').html(searchNewContactUserList)
+            }, error: function (xhr) {
+            }
+        });
+    })
+
 
     function hideUserProfile() {
         $(".user-profile-sidebar").css('display', 'none');
