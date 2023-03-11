@@ -21,8 +21,8 @@ return new class extends Migration
             $table->tinyInteger('status')->default(0)->comment('0 for unread,1 for seen');
             $table->tinyInteger('message_type')->default(0)->comment('0- text message, 1- image, 2- pdf, 3- doc, 4- voice');
             $table->text('file_name')->nullable();
-            $table->json('url_details');
-            $table->foreignId('reply_to')->constrained('users')->onDelete('cascade');
+            $table->json('url_details')->nullable();
+            $table->foreignId('reply_to')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
