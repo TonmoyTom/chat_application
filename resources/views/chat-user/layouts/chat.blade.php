@@ -243,10 +243,10 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-sm-12 text-start">
-                            <button type="submit" class="btn btn-primary"
-                                    data-loading-text="<span class='spinner-border spinner-border-sm'></span> Processing...">
-                                Save
-                            </button>
+{{--                            <button type="submit" class="btn btn-primary"--}}
+{{--                                    data-loading-text="<span class='spinner-border spinner-border-sm'></span> Processing...">--}}
+{{--                                Save--}}
+{{--                            </button>--}}
                             <button type="button" id="btnCancel" class="btn btn-secondary ms-1 "
                                     data-bs-dismiss="modal">Cancel
                             </button>
