@@ -106,7 +106,7 @@
 
             <div class="mt-3">
                 <div class="p-3 fw-bold text-primary">
-                    C
+
                 </div>
 
                 <ul class="list-unstyled contact-list">

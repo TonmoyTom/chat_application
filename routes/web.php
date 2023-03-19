@@ -89,9 +89,11 @@ Route::middleware('auth')->group(function () {
          Route::post('/file-upload', [ChatController::class, 'fileUpload'])->name('file-upload');
          Route::post('/another-user-profile', [ChatController::class, 'anotherUserProfile'])->name('another.user.profile');
          Route::post('/online-user', [ChatController::class, 'onlineUser'])->name('online.user');
+         Route::post('/online-user-owner', [ChatController::class, 'onlineUserOwner'])->name('online.user.owner');
          Route::post('/user-search', [ChatController::class, 'userSearch'])->name('user.search');
          Route::post('/user-search-contact', [ChatController::class, 'userSearchContact'])->name('user.search.contact');
          Route::post('/user-search-contact-new', [ChatController::class, 'userSearchContactNew'])->name('user.search.contact.new');
+         Route::post('/group-create', [ChatController::class, 'groupCreate'])->name('group.create');
      });
 
 

@@ -245,9 +245,61 @@ $(document).ready(function () {
             $(`.singleActive`).removeClass('singleActive');
             $(`#newFriend${anotherMessage.chat.sender.id}`).addClass('singleActive');
             scrollBottom();
+            console.log("hello");
         });
+
+
     window.Echo.join(`chat`)
+        .here(function (users) {
+            var jsonUsers = JSON.stringify(users)
+            console.log(users);
+            $.ajax({
+                method: 'post',
+                url: '/chat/online-user-owner',
+                data: {
+                    users: users,
+                    '_token': csrf
+                },
+                success: function (response) {
+                    console.log(response);
+                    if (response != "") {
+                        var onlineUserData = '';
+                        onlineUserData += `<div class="owl-stage-outer">
+                        <div class="owl-stage"
+                        style="transform: translate3d(0px, 0px, 0px); transition: all 0s ease 0s; width: 87px;display: inline-flex;">`;
+                        $.each(response, function (key, onlineUser) {
+                            // if(onlineUser.id != new_authId){
+                            onlineUserData += `<div class="owl-item active activeUser" id="leaving${onlineUser.id}" style="width: 71px; margin-right: 16px;" data-id="${onlineUser.id}" >
+                            <div class="item">
+                                <a href="#" class="user-status-box">
+                                    <div class="avatar-xs mx-auto d-block chat-user-img online">
+                                       <img src="${(onlineUser.photo_url == null) ? `http://127.0.0.1:8000/default/default_image.png` : `http://127.0.0.1:8000/storage/${onlineUser.photo_url}`} "
+                                        alt="user-img" class="img-fluid rounded-circle">
+                                        <span class="user-status"></span>
+                                    </div>
+                                    <h5 class="font-size-13 text-truncate mt-3 mb-1">${onlineUser.name}</h5>
+                                </a>
+                            </div></div>`;
+                            $(`#onlineCheck${onlineUser.id}`).removeClass('away');
+                            $(`#onlineCheck${onlineUser.id}`).addClass('online');
+                            $(`#onlineChatCheck${onlineUser.id}`).removeClass('text-warning');
+                            $(`#onlineChatCheck${onlineUser.id}`).addClass('text-success');
+                            $(`#onlineCheckContact${onlineUser.id}`).removeClass('away');
+                            $(`#onlineCheckContact${onlineUser.id}`).addClass('online');
+
+                            $(`#newUserOnline${onlineUser.id}`).removeClass('away');
+                            $(`#newUserOnline${onlineUser.id}`).addClass('online');
+                            // }
+                        });
+                        onlineUserData += `</div></div>`;
+                        $('#user-status-carousel').html(onlineUserData);
+                    }
+                }
+            });
+
+        })
         .joining((user) => {
+            console.log(user);
             // axios.put('/api/user/'+ user.id +'/offline?api_token=' + user.api_token, {});
             $.ajax({
                 method: 'post',
@@ -267,6 +319,7 @@ $(document).ready(function () {
                         style="transform: translate3d(0px, 0px, 0px); transition: all 0s ease 0s; width: 87px;display: inline-flex;">`;
                         $.each(users, function (key, onlineUser) {
                             // if(onlineUser.id != new_authId){
+                            // $(`#leaving${onlineUser.id}`).remove();
                             onlineUserData += `<div class="owl-item active activeUser" id="leaving${onlineUser.id}" style="width: 71px; margin-right: 16px;" data-id="${onlineUser.id}" >
                             <div class="item">
                                 <a href="#" class="user-status-box">
@@ -284,27 +337,25 @@ $(document).ready(function () {
                             $(`#onlineCheckContact${onlineUser.id}`).removeClass('away');
                             $(`#onlineCheckContact${onlineUser.id}`).addClass('online');
                             // }
-
                         });
                         onlineUserData += `</div></div>`;
                         $('#user-status-carousel').html(onlineUserData);
                     }
-
                 }
             });
             $.each(users, function (key, onlineUser) {
                 $(`#newUserOnline${onlineUser.id}`).removeClass('away');
                 $(`#newUserOnline${onlineUser.id}`).addClass('online');
-
             });
         })
         .leaving(user => {
             users = users.filter(u => u.id != user.id);
+            $(`#leaving${user.id}`).remove();
+
         })
         .listen('Demo', (e) => {
             console.log(e);
         });
-
 
     window.Echo.join(`new-user`)
         .joining((user) => {
@@ -610,9 +661,9 @@ $(document).ready(function () {
                 $.each(response.contactListUser, function (key, user) {
                     console.log(userIds.includes(user.user_id));
                     if (userIds.includes(user.user_id) != true) {
-                        var onlineUserContact =  'away';
+                        var onlineUserContact = 'away';
                     } else {
-                        var onlineUserContact =  'online';
+                        var onlineUserContact = 'online';
                     }
                     searchContactUserList +=
                         `  <li id="contact${user.id}" class="activeUser" data-id="${user.id}">
@@ -656,7 +707,7 @@ $(document).ready(function () {
                 $.each(response.contactListUserNew, function (key, user) {
                     console.log(userIds.includes(user.user_id));
                     if (userIds.includes(user.user_id) != true) {
-                       var onlineNewUserContact = 'away';
+                        var onlineNewUserContact = 'away';
                     } else {
                         var onlineNewUserContact = 'online';
                     }
@@ -688,6 +739,35 @@ $(document).ready(function () {
     function hideUserProfile() {
         $(".user-profile-sidebar").css('display', 'none');
     }
+
+// Group
+
+    function activeGroup() {
+        console.log("hello");
+    }
+
+    $('#createGroupForm').submit(function (e) {
+        e.preventDefault();
+        var formDataGroup = new FormData(this);
+        $.ajax({
+            method: 'post',
+            url: '/chat/group-create',
+            data: formDataGroup,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+
+                $('#createNewGroup').modal('hide');
+                $('#pills-chat-tab').removeClass('active show');
+                $('#pills-chat').removeClass('active');
+                $('#pills-groups-tab').addClass('active');
+                $('#pills-groups').addClass('active show');
+            }, error: function (xhr) {
+            }
+        });
+
+    });
 });
 
 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Chat;
 use App\Http\Controllers\Controller;
 use App\Models\ChatRequest;
 use App\Models\Conversation;
+use App\Models\Group;
+use App\Models\GroupUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -274,6 +276,27 @@ class ChatController extends Controller
         }
     }
 
+    public function onlineUserOwner(Request $request)
+    {
+        $newUsers = [];
+        $users = collect($request->users)->pluck('id');
+        foreach ($users as $key => $user) {
+            if (auth()->id() != $user) {
+                array_push($newUsers, $user);
+            }
+        }
+
+        $chatRequestFrom = \App\Models\ChatRequest::where('from_id', auth()->id())->pluck('owner_id')->toArray();
+        $chatRequestOwner = \App\Models\ChatRequest::where('owner_id', auth()->id())->pluck('from_id')->toArray();
+        $chatRequestId = array_unique(array_merge($chatRequestFrom, $chatRequestOwner));
+        $users = User::where('id', '!=', \auth()->id())->whereIn('id', $chatRequestId)->orderBy('id', 'desc')->pluck('id')->toArray();
+
+        $checkUser = array_intersect($newUsers, $users);
+        $user = User::whereIn('id', $checkUser)->get();
+        return $user;
+
+    }
+
     public function userSearch(Request $request)
     {
         DB::statement("SET SESSION sql_mode=''");
@@ -314,7 +337,7 @@ class ChatController extends Controller
             return stripos($item['name'], $search) !== false;
         })->toArray();
 
-        if(count($recentUsersWithMessage) > 0){
+        if (count($recentUsersWithMessage) > 0) {
             foreach ($recentUsersWithMessage as $seachUserMessage) {
                 $searchUser[] = [
                     'user_id' => $seachUserMessage['user_id'],
@@ -327,7 +350,7 @@ class ChatController extends Controller
                     'name' => $seachUserMessage['name'],
                 ];
             }
-        }else{
+        } else {
             $searchUser = [];
         }
         return response()->json([
@@ -335,24 +358,25 @@ class ChatController extends Controller
         ], 202);
     }
 
-    public function userSearchContact( Request $request){
+    public function userSearchContact(Request $request)
+    {
         $chatRequestFrom = \App\Models\ChatRequest::where('from_id', auth()->id())->pluck('owner_id')->toArray();
         $chatRequestOwner = \App\Models\ChatRequest::where('owner_id', auth()->id())->pluck('from_id')->toArray();
         $chatRequestId = array_unique(array_merge($chatRequestFrom, $chatRequestOwner));
         $users = User::where('id', '!=', \auth()->id())->whereIn('id', $chatRequestId)
-            ->where('name' , 'LIKE', "%".$request->userContactSearch. "%")
+            ->where('name', 'LIKE', "%" . $request->userContactSearch . "%")
             ->orderBy('id', 'desc')->get();
 
-        if(count($users) > 0){
+        if (count($users) > 0) {
             foreach ($users as $seachUserContact) {
                 $searchUserContactList[] = [
                     'id' => $seachUserContact->id,
                     'name' => $seachUserContact->name,
                     'email' => $seachUserContact->email,
-                    'photo_url' =>  setImage($seachUserContact->photo_url),
+                    'photo_url' => setImage($seachUserContact->photo_url),
                 ];
             }
-        }else{
+        } else {
             $searchUserContactList = [];
         }
         return response()->json([
@@ -360,28 +384,50 @@ class ChatController extends Controller
         ], 202);
     }
 
-    public function userSearchContactNew( Request $request){
+    public function userSearchContactNew(Request $request)
+    {
         $chatRequestFrom = \App\Models\ChatRequest::where('from_id', auth()->id())->pluck('owner_id')->toArray();
         $chatRequestOwner = \App\Models\ChatRequest::where('owner_id', auth()->id())->pluck('from_id')->toArray();
         $chatRequestId = array_unique(array_merge($chatRequestFrom, $chatRequestOwner));
         $users = User::where('id', '!=', \auth()->id())->whereNotIn('id', $chatRequestId)
-            ->where('name' , 'LIKE', "%".$request->userNewContactSearch. "%")
+            ->where('name', 'LIKE', "%" . $request->userNewContactSearch . "%")
             ->orderBy('id', 'desc')->get();
 
-        if(count($users) > 0){
+        if (count($users) > 0) {
             foreach ($users as $seachUserContact) {
                 $searchUserContactList[] = [
                     'id' => $seachUserContact->id,
                     'name' => $seachUserContact->name,
                     'email' => $seachUserContact->email,
-                    'photo_url' =>  setImage($seachUserContact->photo_url),
+                    'photo_url' => setImage($seachUserContact->photo_url),
                 ];
             }
-        }else{
+        } else {
             $searchUserContactList = [];
         }
         return response()->json([
             'contactListUserNew' => $searchUserContactList,
+        ], 202);
+    }
+
+    public function groupCreate(Request $request)
+    {
+        $group = Group::create([
+            'name' => $request->name,
+            'privacy' => $request->privacy_type,
+            'group_type' => 1,
+            'created_by ' => auth()->id(),
+            'photo_url' => setImage($request->photo),
+        ]);
+        $groupUser = GroupUser::create([
+            'group_id' => $group->id,
+            'user_id ' => auth()->id(),
+            'role ' => 1,
+        ]);
+
+        return response()->json([
+            'group' => $group,
+            'group_user' => $groupUser,
         ], 202);
     }
 

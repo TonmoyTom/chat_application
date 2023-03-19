@@ -57,7 +57,7 @@
         <div>
             <h5 class="mb-3 px-3 font-size-16">Recent</h5>
 
-            <div class="chat-message-list px-2" data-simplebar>
+            <div class="chat-message-list px-2" data-simplebar id="top_show">
 
                 <ul class="list-unstyled chat-list chat-user-list" id="newfriendList">
                    @include('chat-user.chat.user')
@@ -156,16 +156,11 @@
                 <h4 class="modal-title group-modal-title">New Group</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="POST" action="https://chat.infyom.com/conversations" accept-charset="UTF-8"
-                  id="createGroupForm">
-                <input name="_token" type="hidden"
-                       value="jsr124JmIzp0G5ksaC88qFYDrkidmXuqSptDY9pi">
-                <input type="hidden" name="_token" value="jsr124JmIzp0G5ksaC88qFYDrkidmXuqSptDY9pi">
+            <form enctype="multipart/form-data" method="POST" id="createGroupForm">
                 <div class="modal-body">
                     <div class="form-group col-sm-12">
                         <div class="alert alert-danger" style="display: none" id="groupValidationErrorsBox"></div>
                     </div>
-                    <input type="hidden" name="id" value="" id="groupId">
                     <div class="row">
                         <div class="col-12 mb-3">
                             <label for="name" class="login-group__sub-title">Group Name:</label><span
@@ -189,43 +184,44 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="mb-3 radio-group-section">
-                            <div class="div-group-type d-flex ms-1">
-                                <div class="me-3">
-                                    <label for="type" class="login-group__sub-title">Group Type</label>:
-                                    <span class="red">*</span>
-                                </div>
-                                <div class="d-flex justify-content-around radio-group-type">
-                                    <div class="me-3">
-                                        <div class="iradio_square-blue checked" style="position: relative;"><input
-                                                class="group-type" id="groupTypeOpen" checked="checked"
-                                                name="group_type" type="radio" value="1"
-                                                style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;">
-                                            <ins class="iCheck-helper"
-                                                 style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins>
-                                        </div>
-                                        Open
-                                        <i class="fa fa-question-circle ms-2 question-type-open cursor-pointer"
-                                           data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                           data-bs-original-title="All group members can send messages into the group."
-                                           aria-label="All group members can send messages into the group."></i>
-                                    </div>
-                                    <div>
-                                        <div class="iradio_square-blue" style="position: relative;"><input
-                                                class="group-type" id="groupTypeClose" name="group_type" type="radio"
-                                                value="2"
-                                                style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;">
-                                            <ins class="iCheck-helper"
-                                                 style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins>
-                                        </div>
-                                        Close
-                                        <i class="fa fa-question-circle ms-2 question-type-close cursor-pointer"
-                                           data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                           data-bs-original-title="The admin only can send messages into the group."
-                                           aria-label="The admin only can send messages into the group."></i></div>
-                                </div>
-                            </div>
-                        </div>
+{{--                        <div class="mb-3 radio-group-section">--}}
+{{--                            <div class="div-group-type d-flex ms-1">--}}
+{{--                                <div class="me-3">--}}
+{{--                                    <label for="type" class="login-group__sub-title">Group Type</label>:--}}
+{{--                                    <span class="red">*</span>--}}
+{{--                                </div>--}}
+{{--                                <div class="d-flex justify-content-around radio-group-type">--}}
+{{--                                    <div class="me-3">--}}
+{{--                                        <div class="iradio_square-blue checked" style="position: relative;"><input--}}
+{{--                                                class="group-type" id="groupTypeOpen" checked="checked"--}}
+{{--                                                name="group_type" type="radio" value="1"--}}
+{{--                                                style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;">--}}
+{{--                                            <ins class="iCheck-helper"--}}
+{{--                                                 style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins>--}}
+{{--                                        </div>--}}
+{{--                                        Open--}}
+{{--                                        <i class="fa fa-question-circle ms-2 question-type-open cursor-pointer"--}}
+{{--                                           data-bs-toggle="tooltip" data-bs-placement="top" title=""--}}
+{{--                                           data-bs-original-title="All group members can send messages into the group."--}}
+{{--                                           aria-label="All group members can send messages into the group."></i>--}}
+{{--                                    </div>--}}
+{{--                                    <div>--}}
+{{--                                        <div class="iradio_square-blue" style="position: relative;">--}}
+{{--                                            <input--}}
+{{--                                                class="group-type" id="groupTypeClose" name="group_type" type="radio"--}}
+{{--                                                value="2"--}}
+{{--                                                style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;">--}}
+{{--                                            <ins class="iCheck-helper"--}}
+{{--                                                 style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins>--}}
+{{--                                        </div>--}}
+{{--                                        Close--}}
+{{--                                        <i class="fa fa-question-circle ms-2 question-type-close cursor-pointer"--}}
+{{--                                           data-bs-toggle="tooltip" data-bs-placement="top" title=""--}}
+{{--                                           data-bs-original-title="The admin only can send messages into the group."--}}
+{{--                                           aria-label="The admin only can send messages into the group."></i></div>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
+{{--                        </div>--}}
                         <div class="col-12 mb-3">
                             <div class="div-group-privacy d-flex">
                                 <div class="me-3">
@@ -234,32 +230,12 @@
                                 </div>
                                 <div class="d-flex justify-content-around radio-group-type">
                                     <div class="me-3">
-                                        <div class="iradio_square-blue checked" style="position: relative;"><input
-                                                class="group-privacy" id="groupPublic" checked="checked" name="privacy"
-                                                type="radio" value="1"
-                                                style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;">
-                                            <ins class="iCheck-helper"
-                                                 style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins>
-                                        </div>
+                                        <input class="form-check-input" type="radio" name="privacy_type" value="0" >
                                         Public
-                                        <i class="fa fa-question-circle ms-2 question-type-public cursor-pointer"
-                                           data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                           data-bs-original-title="All group members can add or remove members from the group."
-                                           aria-label="All group members can add or remove members from the group."></i>
                                     </div>
                                     <div>
-                                        <div class="iradio_square-blue" style="position: relative;"><input
-                                                class="group-privacy" id="groupPrivate" name="privacy" type="radio"
-                                                value="2"
-                                                style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;">
-                                            <ins class="iCheck-helper"
-                                                 style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; background: rgb(255, 255, 255); border: 0px; opacity: 0;"></ins>
-                                        </div>
+                                        <input class="form-check-input" type="radio" name="privacy_type" value="1" >
                                         Private
-                                        <i class="fa fa-question-circle ms-2  question-type-private cursor-pointer"
-                                           data-bs-toggle="tooltip" data-bs-placement="top" title=""
-                                           data-bs-original-title="The admin only can add or remove members from the group."
-                                           aria-label="The admin only can add or remove members from the group."></i>
                                     </div>
                                 </div>
                             </div>
@@ -267,7 +243,7 @@
                     </div>
                     <div class="row mt-2">
                         <div class="col-sm-12 text-start">
-                            <button type="submit" class="btn btn-primary" id="btnCreateGroup"
+                            <button type="submit" class="btn btn-primary"
                                     data-loading-text="<span class='spinner-border spinner-border-sm'></span> Processing...">
                                 Save
                             </button>
@@ -286,6 +262,8 @@
 
 @push('script')
     <script>
+
+        // $("#top_show").scrollTop()
         var id  = '{{ auth()->id() }}';
         myContact(id)
         function myContact( id){
@@ -324,6 +302,7 @@
         function blockUser(){
             console.log("block")
         }
+
 
         {{--$(document).ready(function() {--}}
         {{--    $('#addFriend').click(function (){--}}

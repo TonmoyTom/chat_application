@@ -23,7 +23,7 @@
                             </button>
                         </div>
                         <div class="modal-body p-4">
-                            <form>
+                            <form  id="groupSave" enctype="multipart/form-data" method="POST">
                                 <div class="mb-4">
                                     <label for="addgroupname-input" class="form-label">Group Name</label>
                                     <input type="text" class="form-control" id="addgroupname-input" placeholder="Enter Group Name">
@@ -44,7 +44,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-link" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Create Groups</button>
+                            <button type="submit" class="btn btn-primary" >Create Groups</button>
                         </div>
                     </div>
                 </div>
