@@ -13,6 +13,7 @@
 </div>
 <div class="flex-lg-column my-auto">
     <ul class="nav nav-pills side-menu-nav justify-content-center" role="tablist">
+
         <li class="nav-item" data-bs-toggle="tooltip" data-bs-placement="top" title="Profile">
             <a class="nav-link" id="pills-user-tab" data-bs-toggle="pill" href="#pills-user" role="tab" onclick="profile()">
                 <i class="ri-user-2-line"></i>

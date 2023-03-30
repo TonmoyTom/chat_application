@@ -292,7 +292,13 @@ class ChatController extends Controller
         $users = User::where('id', '!=', \auth()->id())->whereIn('id', $chatRequestId)->orderBy('id', 'desc')->pluck('id')->toArray();
 
         $checkUser = array_intersect($newUsers, $users);
-        $user = User::whereIn('id', $checkUser)->get();
+        $user = User::whereIn('id', $checkUser)->get()->map(function ($u){
+            return [
+                'id' => $u->id,
+                'name' => $u->name,
+                'photo_url' => setImage($u->photo_url),
+            ]
+        });
         return $user;
 
     }

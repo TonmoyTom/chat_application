@@ -273,8 +273,7 @@ $(document).ready(function () {
                             <div class="item">
                                 <a href="#" class="user-status-box">
                                     <div class="avatar-xs mx-auto d-block chat-user-img online">
-                                       <img src="${(onlineUser.photo_url == null) ? `http://127.0.0.1:8000/default/default_image.png` : `http://127.0.0.1:8000/storage/${onlineUser.photo_url}`} "
-                                        alt="user-img" class="img-fluid rounded-circle">
+                                        <img src="${onlineUser.photo_url}" alt="user-img" class="img-fluid rounded-circle">
                                         <span class="user-status"></span>
                                     </div>
                                     <h5 class="font-size-13 text-truncate mt-3 mb-1">${onlineUser.name}</h5>
@@ -769,6 +768,8 @@ $(document).ready(function () {
 
     });
 });
+
+
 
 
 
